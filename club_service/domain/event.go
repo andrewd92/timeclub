@@ -5,6 +5,7 @@ type Event struct {
 	tag      string
 	discount Discount
 	period   TimePeriod
+	price    float32
 }
 
 func (e Event) Name() string {
