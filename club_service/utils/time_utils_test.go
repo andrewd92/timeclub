@@ -39,8 +39,8 @@ func TestSplitTimeStringWhenFormatError(t *testing.T) {
 	timeString := "12-34"
 
 	actualHour, actualMinute, actualErr := SplitTimeString(timeString)
-	assert.Nil(t, actualHour)
-	assert.Nil(t, actualMinute)
+	assert.Equal(t, 0, actualHour)
+	assert.Equal(t, 0, actualMinute)
 	assert.NotNil(t, actualErr)
 }
 

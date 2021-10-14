@@ -11,49 +11,20 @@ type VisitPeriod struct {
 	firstMinute int
 }
 
-func (v *VisitPeriod) split(closeTime string) ([]*VisitPeriod, error) {
-	closeHour, closeMinute, splitErr := utils.SplitTimeString(closeTime)
-	if splitErr != nil {
-		return nil, splitErr
+func (v *VisitPeriod) Split(closeTime string) ([]*VisitPeriod, error) {
+	closeTs, closeTsCalculationErr := v.calculateCloseTs(closeTime)
+	if closeTsCalculationErr != nil {
+		return nil, closeTsCalculationErr
 	}
 
-	oneDayDuration, _ := time.ParseDuration("24h")
-	oneDayDurationSec := int64(oneDayDuration.Seconds())
-
-	closeTs := time.Date(v.start.Year(), v.start.Month(), v.start.Day(), closeHour, closeMinute, 0, 0, v.start.Location()).Unix()
-	startTs := v.start.Unix()
-	endTs := v.end.Unix()
-
-	if startTs >= closeTs {
-		closeTs += oneDayDurationSec
-	}
-
-	if endTs <= closeTs {
+	if v.end.Unix() <= closeTs {
 		period := *v
 		return []*VisitPeriod{&period}, nil
 	}
 
-	periodsTs := []int64{startTs}
+	tsRange := v.splitToTsRange(closeTs)
 
-	for endTs > closeTs {
-		periodsTs = append(periodsTs, closeTs)
-		closeTs += oneDayDurationSec
-	}
-
-	periodsTs = append(periodsTs, endTs)
-
-	periods := make([]*VisitPeriod, len(periodsTs)-1)
-
-	for i := 0; i < len(periodsTs)-1; i++ {
-		periodStartTs := periodsTs[i]
-		startTime := time.Unix(periodStartTs, 0)
-		endTime := time.Unix(periodsTs[i+1], 0)
-		firstMinute := int((periodStartTs - startTs) / 60)
-
-		periods = append(periods, NewVisitPeriodFromMinute(startTime, endTime, firstMinute))
-	}
-
-	return periods, nil
+	return v.calculatePeriodFromTsRange(tsRange), nil
 }
 
 func (v VisitPeriod) Start() time.Time {
@@ -66,6 +37,50 @@ func (v VisitPeriod) End() time.Time {
 
 func (v VisitPeriod) FirstMinute() int {
 	return v.firstMinute
+}
+
+func (v VisitPeriod) calculateCloseTs(closeTime string) (int64, error) {
+	closeHour, closeMinute, splitErr := utils.SplitTimeString(closeTime)
+	if splitErr != nil {
+		return 0, splitErr
+	}
+
+	closeTs := time.Date(v.start.Year(), v.start.Month(), v.start.Day(), closeHour, closeMinute, 0, 0, v.start.Location()).Unix()
+
+	if v.start.Unix() >= closeTs {
+		closeTs += utils.OneDayDuration
+	}
+
+	return closeTs, nil
+}
+
+func (v VisitPeriod) splitToTsRange(closeTs int64) []int64 {
+	endTs := v.end.Unix()
+	tsRange := []int64{v.start.Unix()}
+
+	for endTs > closeTs {
+		tsRange = append(tsRange, closeTs)
+		closeTs += utils.OneDayDuration
+	}
+
+	tsRange = append(tsRange, endTs)
+
+	return tsRange
+}
+
+func (v VisitPeriod) calculatePeriodFromTsRange(tsRange []int64) []*VisitPeriod {
+	var periods []*VisitPeriod
+
+	for i := 0; i < len(tsRange)-1; i++ {
+		periodStartTs := tsRange[i]
+		startTime := time.Unix(periodStartTs, 0)
+		endTime := time.Unix(tsRange[i+1], 0)
+		firstMinute := int((periodStartTs - v.start.Unix()) / 60)
+
+		periods = append(periods, NewVisitPeriodFromMinute(startTime, endTime, firstMinute))
+	}
+
+	return periods
 }
 
 func NewVisitPeriodFromMinute(start time.Time, end time.Time, firstMinute int) *VisitPeriod {

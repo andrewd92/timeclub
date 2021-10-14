@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const OneDayDuration int64 = 86400
+
 func MaxTime(a, b time.Time) time.Time {
 	if a.Unix() < b.Unix() {
 		return b
