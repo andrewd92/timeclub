@@ -11,18 +11,18 @@ type VisitPeriod struct {
 	firstMinute int
 }
 
-func (v *VisitPeriod) Split(closeTime string) ([]*VisitPeriod, error) {
-	closeTs, closeTsCalculationErr := v.calculateCloseTs(closeTime)
-	if closeTsCalculationErr != nil {
-		return nil, closeTsCalculationErr
+func (v *VisitPeriod) Split(splitTime string) ([]*VisitPeriod, error) {
+	firstSplitTs, firstSplitTsCalculationErr := v.calculateFirstSplitTs(splitTime)
+	if firstSplitTsCalculationErr != nil {
+		return nil, firstSplitTsCalculationErr
 	}
 
-	if v.end.Unix() <= closeTs {
+	if v.end.Unix() <= firstSplitTs {
 		period := *v
 		return []*VisitPeriod{&period}, nil
 	}
 
-	tsRange := v.splitToTsRange(closeTs)
+	tsRange := v.splitToTsRange(firstSplitTs)
 
 	return v.calculatePeriodFromTsRange(tsRange), nil
 }
@@ -39,19 +39,19 @@ func (v VisitPeriod) FirstMinute() int {
 	return v.firstMinute
 }
 
-func (v VisitPeriod) calculateCloseTs(closeTime string) (int64, error) {
-	closeHour, closeMinute, splitErr := utils.SplitTimeString(closeTime)
+func (v VisitPeriod) calculateFirstSplitTs(splitTime string) (int64, error) {
+	splitHour, splitMinute, splitErr := utils.SplitTimeString(splitTime)
 	if splitErr != nil {
 		return 0, splitErr
 	}
 
-	closeTs := time.Date(v.start.Year(), v.start.Month(), v.start.Day(), closeHour, closeMinute, 0, 0, v.start.Location()).Unix()
+	splitTs := time.Date(v.start.Year(), v.start.Month(), v.start.Day(), splitHour, splitMinute, 0, 0, v.start.Location()).Unix()
 
-	if v.start.Unix() >= closeTs {
-		closeTs += utils.OneDayDuration
+	if v.start.Unix() >= splitTs {
+		splitTs += utils.OneDayDuration
 	}
 
-	return closeTs, nil
+	return splitTs, nil
 }
 
 func (v VisitPeriod) splitToTsRange(closeTs int64) []int64 {
