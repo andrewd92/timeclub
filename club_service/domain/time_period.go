@@ -25,6 +25,15 @@ func (t TimePeriod) End() time.Time {
 	return t.end
 }
 
+func (t TimePeriod) Duration() int {
+	return int(t.end.Unix() - t.start.Unix())
+}
+
+func (t TimePeriod) DurationMinutes() int {
+	duration := float64(t.Duration()) / 60.0
+	return utils.FloorFloat64ToInt(duration)
+}
+
 func NewTimePeriod(start time.Time, end time.Time) *TimePeriod {
 	return &TimePeriod{start: start, end: end}
 }

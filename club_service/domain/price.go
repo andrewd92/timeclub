@@ -26,8 +26,12 @@ func (p Price) Currency() *Currency {
 	return p.currency
 }
 
-func (p Price) Calculate(visit *Visit) float32 {
-	return p.valuePerMinute * float32(p.period.TimeForPay(visit.Duration()))
+func (p Price) Calculate(visitPeriod *VisitPeriod) float32 {
+	return p.valuePerMinute * float32(p.period.TimeForPay(visitPeriod.Duration()))
+}
+
+func (p Price) CalculateForPeriod(period TimePeriod) float32 {
+	return float32(period.DurationMinutes()) * p.valuePerMinute
 }
 
 func (p Price) Max() float32 {

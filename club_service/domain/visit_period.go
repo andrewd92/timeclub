@@ -83,6 +83,37 @@ func (v VisitPeriod) calculatePeriodFromTsRange(tsRange []int64) []*VisitPeriod 
 	return periods
 }
 
+func (v VisitPeriod) Duration() int {
+	durationOfMinutes := v.end.Sub(v.start).Minutes()
+
+	return utils.FloorFloat64ToInt(durationOfMinutes)
+}
+
+func (v VisitPeriod) calculatePrice(priceList PriceList, details OrderDetails) float32 {
+	var result float32 = 0
+
+	for _, price := range priceList.Prices() {
+		period := v.period(price.Period())
+
+		discount := float32(0)
+
+		for _, event := range details.Events() {
+			discount += event.calculateDiscount(period, price.ValuePerMinute())
+		}
+
+		result += price.CalculateForPeriod(*period)
+	}
+
+	return result
+}
+
+func (v VisitPeriod) period(period *PricePeriod) *TimePeriod {
+	start := utils.AddMinutes(v.start, period.from)
+	end := utils.AddMinutes(v.start, period.to)
+
+	return NewTimePeriod(start, end)
+}
+
 func NewVisitPeriodFromMinute(start time.Time, end time.Time, firstMinute int) *VisitPeriod {
 	return &VisitPeriod{start: start, end: end, firstMinute: firstMinute}
 }

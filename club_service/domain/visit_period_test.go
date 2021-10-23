@@ -60,6 +60,17 @@ func TestVisitPeriod_splitOneFullPeriod(t *testing.T) {
 	assertVisitPeriodsEquals(t, expected, split)
 }
 
+func TestVisitPeriod_SplitTimeError(t *testing.T) {
+	startTime, _ := time.Parse("2006-01-02 15:04:05", "2020-02-06 12:00:00")
+	endTime := startTime.Add(24 * time.Hour)
+	initPeriod := NewVisitPeriod(startTime, endTime)
+
+	invalidTimeFormat := "12:00:00"
+	_, splitErr := initPeriod.Split(invalidTimeFormat)
+
+	assert.NotNil(t, splitErr)
+}
+
 func assertVisitPeriodsEquals(t *testing.T, expected []*VisitPeriod, actual []*VisitPeriod) {
 	assert.Equal(t, len(expected), len(actual))
 

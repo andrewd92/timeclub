@@ -61,3 +61,12 @@ func TestSplitTimeStringWhenParseMinuteError(t *testing.T) {
 	assert.Equal(t, 0, actualMinute)
 	assert.NotNil(t, actualErr)
 }
+
+func TestAddMinutes(t *testing.T) {
+	now := time.Now()
+
+	duration, _ := time.ParseDuration("20m")
+	expected := now.Add(duration)
+
+	assert.Equal(t, expected.UnixNano(), AddMinutes(now, 20).UnixNano())
+}

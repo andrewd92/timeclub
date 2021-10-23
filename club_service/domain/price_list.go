@@ -7,11 +7,11 @@ type PriceList struct {
 	max    float32
 }
 
-func (p PriceList) Calculate(visit *Visit, events []*Event) float32 {
+func (p PriceList) Calculate(visitPeriod *VisitPeriod) float32 {
 	var total float32 = 0
 
 	for _, price := range p.prices {
-		total += price.Calculate(visit)
+		total += price.Calculate(visitPeriod)
 	}
 
 	return total

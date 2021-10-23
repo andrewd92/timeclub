@@ -48,3 +48,16 @@ func SplitTimeString(timeString string) (int, int, error) {
 
 	return int(hour), int(minute), nil
 }
+
+func AddMinutes(initDate time.Time, minutes int) time.Time {
+	return time.Date(
+		initDate.Year(),
+		initDate.Month(),
+		initDate.Day(),
+		initDate.Hour(),
+		initDate.Minute()+int(minutes),
+		initDate.Second(),
+		initDate.Nanosecond(),
+		initDate.Location(),
+	)
+}

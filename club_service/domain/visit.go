@@ -36,7 +36,12 @@ func (v Visit) Start() *time.Time {
 }
 
 func (v Visit) End() *time.Time {
-	return v.end
+	if nil != v.end {
+		return v.end
+	}
+
+	now := time.Now()
+	return &now
 }
 
 func (v Visit) Client() *Client {
@@ -47,13 +52,12 @@ func (v Visit) Club() *Club {
 	return v.club
 }
 
-func (v *Visit) Finish() {
-	if nil != v.end {
-		return
-	}
+func (v *Visit) Period() *VisitPeriod {
+	return NewVisitPeriod(*v.Start(), *v.End())
+}
 
-	now := time.Now()
-	v.end = &now
+func (v *Visit) Finish() {
+	v.end = v.End()
 }
 
 func (v *Visit) Duration() int64 {
@@ -66,4 +70,20 @@ func (v *Visit) Duration() int64 {
 	durationOfMinutes := end.Sub(*v.start).Minutes()
 
 	return int64(math.Floor(durationOfMinutes))
+}
+
+func (v Visit) calculate(priceList PriceList) (float32, error) {
+	visitPeriods, splitErr := v.Period().Split(v.club.openTime)
+
+	if nil != splitErr {
+		return 0, splitErr
+	}
+
+	var result float32 = 0
+
+	for _, period := range visitPeriods {
+		result += period.calculatePrice(priceList, v.orderDetails)
+	}
+
+	return result, nil
 }

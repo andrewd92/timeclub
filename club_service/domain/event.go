@@ -1,5 +1,9 @@
 package domain
 
+import (
+	"github.com/andrewd92/timeclub/club_service/utils"
+)
+
 type Event struct {
 	name     string
 	tag      string
@@ -22,6 +26,15 @@ func (e Event) Discount() Discount {
 
 func (e Event) Period() TimePeriod {
 	return e.period
+}
+
+func (e Event) calculateDiscount(period *TimePeriod, pricePerMinute float32) float32 {
+	return pricePerMinute * e.discount.multiplier() * float32(e.minutes(period))
+}
+
+func (e Event) minutes(period *TimePeriod) int {
+	commonMinutes := float64(e.period.CommonSeconds(period)) / 60.0
+	return utils.FloorFloat64ToInt(commonMinutes)
 }
 
 func NewEvent(name string, tag string, discount Discount, period TimePeriod) *Event {
