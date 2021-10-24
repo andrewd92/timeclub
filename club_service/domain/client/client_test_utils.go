@@ -1,15 +1,15 @@
-package test_utils
+package client
 
 import (
-	"github.com/andrewd92/timeclub/club_service/domain"
+	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"time"
 )
 
-func DefaultClient() *domain.Client {
+func DefaultClient() *Client {
 
 	birthday, _ := time.Parse("2006-01-02", "1990-01-01")
 
-	return domain.NewClient(
+	return NewClient(
 		1,
 		"Andy",
 		"D",
@@ -18,7 +18,7 @@ func DefaultClient() *domain.Client {
 		birthday,
 		"abc123.jpg",
 		0,
-		DefaultClub(),
+		club.DefaultClub(),
 		"San Francisco",
 		"",
 		time.Now(),

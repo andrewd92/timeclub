@@ -1,4 +1,4 @@
-package domain
+package price
 
 type Currency struct {
 	id        int64

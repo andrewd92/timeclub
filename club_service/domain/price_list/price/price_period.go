@@ -1,4 +1,4 @@
-package domain
+package price
 
 // PricePeriod use for configuration price in minutes.
 // f.e. for PricePeriod from 0 minute to 60 minute Price will be 10$ per minute

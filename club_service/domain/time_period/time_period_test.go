@@ -1,18 +1,16 @@
-package domain
+package time_period
 
 import (
 	"github.com/stretchr/testify/assert"
-	"strconv"
 	"testing"
 	"time"
 )
 
 func TestTimePeriod_CommonSecondsWhenFirstPeriodBeforeSecond(t1 *testing.T) {
 	now := time.Now()
-	oneSecondDuration := durationSeconds(1)
-	periodAEnd := now.Add(oneSecondDuration)
-	periodBStart := periodAEnd.Add(oneSecondDuration)
-	periodBEnd := periodBStart.Add(oneSecondDuration)
+	periodAEnd := now.Add(time.Second)
+	periodBStart := periodAEnd.Add(time.Second)
+	periodBEnd := periodBStart.Add(time.Second)
 
 	periodA := NewTimePeriod(now, periodAEnd)
 	periodB := NewTimePeriod(periodBStart, periodBEnd)
@@ -24,10 +22,9 @@ func TestTimePeriod_CommonSecondsWhenFirstPeriodBeforeSecond(t1 *testing.T) {
 
 func TestTimePeriod_CommonSecondsWhenFirstPeriodAfterSecond(t1 *testing.T) {
 	now := time.Now()
-	oneSecondDuration := durationSeconds(1)
-	periodBEnd := now.Add(oneSecondDuration)
-	periodAStart := periodBEnd.Add(oneSecondDuration)
-	periodAEnd := periodAStart.Add(oneSecondDuration)
+	periodBEnd := now.Add(time.Second)
+	periodAStart := periodBEnd.Add(time.Second)
+	periodAEnd := periodAStart.Add(time.Second)
 
 	periodA := NewTimePeriod(periodAStart, periodAEnd)
 	periodB := NewTimePeriod(now, periodBEnd)
@@ -39,10 +36,9 @@ func TestTimePeriod_CommonSecondsWhenFirstPeriodAfterSecond(t1 *testing.T) {
 
 func TestTimePeriod_CommonSecondsWhenSecondPeriodInsideFirst(t1 *testing.T) {
 	now := time.Now()
-	oneSecondDuration := durationSeconds(1)
-	periodBStart := now.Add(oneSecondDuration)
-	periodBEnd := periodBStart.Add(oneSecondDuration)
-	periodAEnd := periodBEnd.Add(oneSecondDuration)
+	periodBStart := now.Add(time.Second)
+	periodBEnd := periodBStart.Add(time.Second)
+	periodAEnd := periodBEnd.Add(time.Second)
 
 	periodA := NewTimePeriod(now, periodAEnd)
 	periodB := NewTimePeriod(periodBStart, periodBEnd)
@@ -54,10 +50,9 @@ func TestTimePeriod_CommonSecondsWhenSecondPeriodInsideFirst(t1 *testing.T) {
 
 func TestTimePeriod_CommonSecondsWhenFirstPeriodStartBeforeSecond(t1 *testing.T) {
 	now := time.Now()
-	oneSecondDuration := durationSeconds(1)
-	periodBStart := now.Add(oneSecondDuration)
-	periodAEnd := periodBStart.Add(oneSecondDuration)
-	periodBEnd := periodAEnd.Add(oneSecondDuration)
+	periodBStart := now.Add(time.Second)
+	periodAEnd := periodBStart.Add(time.Second)
+	periodBEnd := periodAEnd.Add(time.Second)
 
 	periodA := NewTimePeriod(now, periodAEnd)
 	periodB := NewTimePeriod(periodBStart, periodBEnd)
@@ -69,11 +64,10 @@ func TestTimePeriod_CommonSecondsWhenFirstPeriodStartBeforeSecond(t1 *testing.T)
 
 func TestTimePeriod_CommonSecondsWhenFirstPeriodStartAfterSecond(t1 *testing.T) {
 	now := time.Now()
-	oneSecondDuration := durationSeconds(1)
-	periodAStart := now.Add(oneSecondDuration)
+	periodAStart := now.Add(time.Second)
 	periodBStart := now
-	periodAEnd := periodAStart.Add(oneSecondDuration)
-	periodBEnd := periodAEnd.Add(oneSecondDuration)
+	periodAEnd := periodAStart.Add(time.Second)
+	periodBEnd := periodAEnd.Add(time.Second)
 
 	periodA := NewTimePeriod(periodAStart, periodAEnd)
 	periodB := NewTimePeriod(periodBStart, periodBEnd)
@@ -85,11 +79,10 @@ func TestTimePeriod_CommonSecondsWhenFirstPeriodStartAfterSecond(t1 *testing.T) 
 
 func TestTimePeriod_CommonSecondsWhenFirstPeriodStartAndEndAfterSecond(t1 *testing.T) {
 	now := time.Now()
-	oneSecondDuration := durationSeconds(1)
-	periodAStart := now.Add(oneSecondDuration)
+	periodAStart := now.Add(time.Second)
 	periodBStart := now
-	periodBEnd := periodAStart.Add(oneSecondDuration)
-	periodAEnd := periodBEnd.Add(oneSecondDuration)
+	periodBEnd := periodAStart.Add(time.Second)
+	periodAEnd := periodBEnd.Add(time.Second)
 
 	periodA := NewTimePeriod(periodAStart, periodAEnd)
 	periodB := NewTimePeriod(periodBStart, periodBEnd)
@@ -104,7 +97,7 @@ func TestTimePeriod_Duration(t *testing.T) {
 
 	expected := 3600
 
-	period := NewTimePeriod(now, now.Add(durationSeconds(expected)))
+	period := NewTimePeriod(now, now.Add(time.Hour))
 
 	assert.Equal(t, expected, period.Duration())
 }
@@ -112,13 +105,7 @@ func TestTimePeriod_Duration(t *testing.T) {
 func TestTimePeriod_DurationMinutes(t *testing.T) {
 	now := time.Now()
 
-	period := NewTimePeriod(now, now.Add(durationSeconds(3600)))
+	period := NewTimePeriod(now, now.Add(time.Hour))
 
 	assert.Equal(t, 60, period.DurationMinutes())
-}
-
-func durationSeconds(seconds int) time.Duration {
-	duration, _ := time.ParseDuration(strconv.Itoa(seconds) + "s")
-
-	return duration
 }

@@ -1,4 +1,4 @@
-package domain
+package time_period
 
 import (
 	"github.com/andrewd92/timeclub/club_service/utils"

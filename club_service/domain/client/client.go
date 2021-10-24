@@ -1,6 +1,7 @@
-package domain
+package client
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type Client struct {
 	birthday     time.Time
 	foto         string
 	sex          int8
-	club         *Club
+	club         *club.Club
 	city         string
 	comment      string
 	registration time.Time
@@ -29,7 +30,7 @@ func NewClient(
 	birthday time.Time,
 	foto string,
 	sex int8,
-	club *Club,
+	club *club.Club,
 	city string,
 	comment string,
 	registration time.Time,
@@ -59,7 +60,7 @@ func (c Client) Email() string           { return c.email }
 func (c Client) Birthday() time.Time     { return c.birthday }
 func (c Client) Foto() string            { return c.foto }
 func (c Client) Sex() int8               { return c.sex }
-func (c Client) Club() *Club             { return c.club }
+func (c Client) Club() *club.Club        { return c.club }
 func (c Client) City() string            { return c.city }
 func (c Client) Comment() string         { return c.comment }
 func (c Client) Registration() time.Time { return c.registration }
