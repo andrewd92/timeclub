@@ -5,5 +5,5 @@ import (
 )
 
 func DefaultPriceList() *PriceList {
-	return NewPriceList([]*price.Price{DefaultPrice()})
+	return NewPriceList([]*price.Price{price.DefaultPrice()})
 }

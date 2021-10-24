@@ -10,20 +10,8 @@ type PriceList struct {
 	max    float32
 }
 
-func (p PriceList) Calculate(durationMinutes int) float32 {
-	var total float32 = 0
-
-	for _, price := range p.prices {
-		total += price.Calculate(durationMinutes)
-	}
-
-	return total
-}
-
 func (p PriceList) Prices() []*pricePkg.Price {
-	prices := make([]*pricePkg.Price, len(p.prices))
-	copy(prices, p.prices)
-	return prices
+	return p.prices
 }
 
 func (p PriceList) Max() float32 {

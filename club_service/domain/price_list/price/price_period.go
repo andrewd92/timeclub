@@ -22,13 +22,13 @@ func (p PricePeriod) To() int {
 	return p.to
 }
 
-func (p *PricePeriod) TimeForPay(durationMinutes int) int {
-	if p.from > durationMinutes {
+func (p *PricePeriod) TimeForPay(visitDurationMinutes int) int {
+	if p.from > visitDurationMinutes {
 		return 0
 	}
 
-	if p.to > durationMinutes {
-		return durationMinutes - p.from
+	if p.to > visitDurationMinutes {
+		return visitDurationMinutes - p.from
 	}
 
 	return p.totalTime()

@@ -1,8 +1,10 @@
 package visit
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/event"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
+	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
 	"github.com/andrewd92/timeclub/club_service/domain/visit/visit_period"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -35,10 +37,20 @@ func TestVisit_CalculatePrice(t *testing.T) {
 
 	end := visit.Start().Add(1 * time.Hour)
 
-	expected := float32(price_list.DefaultPriceValue*60 - event.DefaultDiscountPerMinute*60)
+	expected := float32(price.DefaultPriceValue*60 - event.DefaultDiscountPerMinute*60)
 
 	actual, err := visit.CalculatePrice(price_list.DefaultPriceList(), end)
 
 	assert.Nil(t, err)
 	assert.Equal(t, expected, actual)
+}
+
+func TestVisit_CalculatePriceShouldReturnErrorWhenWrongClubOpenTime(t *testing.T) {
+	visit := VisitWithClub(club.ClubWithWrongOpenTime())
+
+	end := visit.Start().Add(1 * time.Hour)
+
+	_, err := visit.CalculatePrice(price_list.DefaultPriceList(), end)
+
+	assert.NotNil(t, err)
 }

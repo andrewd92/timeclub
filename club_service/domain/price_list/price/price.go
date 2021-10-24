@@ -10,6 +10,14 @@ type Price struct {
 	currency       *Currency
 }
 
+func (p Price) CalculateForPeriod(period time_period.TimePeriod) float32 {
+	return float32(period.DurationMinutes()) * p.valuePerMinute
+}
+
+func (p Price) Max() float32 {
+	return p.valuePerMinute * float32(p.pricePeriod.totalTime())
+}
+
 func NewPrice(period *PricePeriod, value float32, currency *Currency) *Price {
 	return &Price{
 		pricePeriod:    period,
@@ -28,16 +36,4 @@ func (p Price) ValuePerMinute() float32 {
 
 func (p Price) Currency() *Currency {
 	return p.currency
-}
-
-func (p Price) Calculate(durationMinutes int) float32 {
-	return p.valuePerMinute * float32(p.pricePeriod.TimeForPay(durationMinutes))
-}
-
-func (p Price) CalculateForPeriod(period time_period.TimePeriod) float32 {
-	return float32(period.DurationMinutes()) * p.valuePerMinute
-}
-
-func (p Price) Max() float32 {
-	return p.valuePerMinute * float32(p.pricePeriod.totalTime())
 }
