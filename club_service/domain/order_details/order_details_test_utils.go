@@ -7,5 +7,5 @@ import (
 func DefaultOrderDetails() OrderDetails {
 	events := []*event.Event{event.DefaultEvent()}
 
-	return *NewOrderDetails(events)
+	return NewOrderDetails(events)
 }

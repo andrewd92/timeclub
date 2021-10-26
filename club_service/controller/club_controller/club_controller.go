@@ -8,7 +8,7 @@ import (
 )
 
 func All(c *gin.Context) {
-	clubRepository := club_repository.NewClubInMemoryRepository()
+	clubRepository := club_repository.Instance()
 
 	clubs := clubRepository.GetAll()
 

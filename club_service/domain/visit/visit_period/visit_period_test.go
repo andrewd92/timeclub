@@ -108,7 +108,7 @@ func TestVisitPeriod_CalculatePrice(t *testing.T) {
 	events := []*event.Event{event.DefaultEventFrom(&eventStart)}
 	details := order_details.NewOrderDetails(events)
 
-	actual := period.CalculatePrice(priceList, *details)
+	actual := period.CalculatePrice(priceList, details)
 
 	discountFromEvent := float32(30)
 	expected := price.DefaultPriceValue*float32(price.DefaultPricePeriodDurationMinutes) - discountFromEvent

@@ -1,6 +1,8 @@
 package club_repository
 
 import (
+	"errors"
+	"fmt"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
@@ -13,9 +15,9 @@ type ClubInMemoryRepository struct {
 	lock *sync.RWMutex
 }
 
-var repository *ClubInMemoryRepository
+var repository club.Repository
 
-func NewClubInMemoryRepository() *ClubInMemoryRepository {
+func Instance() club.Repository {
 	if nil != repository {
 		return repository
 	}
@@ -46,4 +48,17 @@ func (r ClubInMemoryRepository) GetAll() []*club.Club {
 	}
 
 	return result
+}
+
+func (r ClubInMemoryRepository) GetById(id int64) (*club.Club, error) {
+	r.lock.RLock()
+	defer r.lock.RUnlock()
+
+	clubModel, ok := r.data[id]
+	fmt.Println(ok)
+	if false == ok {
+		return nil, errors.New("clubModel not exists")
+	}
+
+	return clubModel, nil
 }
