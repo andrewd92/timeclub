@@ -37,7 +37,9 @@ func TestVisit_CalculatePrice(t *testing.T) {
 
 	end := visit.Start().Add(1 * time.Hour)
 
-	expected := float32(price.DefaultPriceValue*60 - event.DefaultDiscountPerMinute*60)
+	discountCoefficient := float32(0.9)
+
+	expected := float32(price.DefaultPriceValue*60-event.DefaultDiscountPerMinute*60) * discountCoefficient
 
 	actual, err := visit.CalculatePrice(price_list.DefaultPriceList(), end)
 

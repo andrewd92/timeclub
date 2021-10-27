@@ -43,6 +43,8 @@ func (v Visit) CalculatePrice(priceList *price_list.PriceList, visitEnd time.Tim
 		result += period.CalculatePrice(priceList, v.orderDetails)
 	}
 
+	result -= v.client.Card().Discount().From(result)
+
 	return result, nil
 }
 

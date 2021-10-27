@@ -15,7 +15,7 @@ type Event struct {
 }
 
 func (e Event) CalculateDiscount(period *time_period.TimePeriod, pricePerMinute float32) float32 {
-	return pricePerMinute * e.discount.Multiplier() * float32(e.minutes(period))
+	return e.discount.From(pricePerMinute * float32(e.minutes(period)))
 }
 
 func (e Event) minutes(period *time_period.TimePeriod) int {
