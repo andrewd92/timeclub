@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/card"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"time"
 )
@@ -19,6 +20,7 @@ type Client struct {
 	comment      string
 	registration time.Time
 	bonusBalance int64
+	card         *card.Card
 }
 
 func NewClient(
@@ -34,7 +36,8 @@ func NewClient(
 	city string,
 	comment string,
 	registration time.Time,
-	bonusBalance int64) *Client {
+	bonusBalance int64,
+	card *card.Card) *Client {
 	return &Client{
 		id:           id,
 		name:         name,
@@ -49,9 +52,11 @@ func NewClient(
 		comment:      comment,
 		registration: registration,
 		bonusBalance: bonusBalance,
+		card:         card,
 	}
 }
 
+func (c Client) Card() *card.Card        { return c.card }
 func (c Client) Id() int64               { return c.id }
 func (c Client) Name() string            { return c.name }
 func (c Client) SecondName() string      { return c.secondName }

@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/card"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"time"
 )
@@ -23,5 +24,6 @@ func DefaultClient() *Client {
 		"",
 		time.Now(),
 		0,
+		card.DefaultCard(),
 	)
 }
