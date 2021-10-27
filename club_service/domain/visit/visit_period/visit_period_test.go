@@ -98,6 +98,21 @@ func TestVisitPeriod_Period(t *testing.T) {
 	assert.True(t, expected.End().Equal(actual.End()))
 }
 
+func TestVisitPeriod_PeriodWhenPricePeriodGreaterThenVisitPeriod(t *testing.T) {
+	start := time.Now()
+	period := NewVisitPeriod(start, start.Add(time.Hour))
+
+	expected := time_period.NewTimePeriod(
+		start,
+		start.Add(time.Hour),
+	)
+
+	actual := period.timePeriod(price.NewPricePeriod(0, 60*24))
+
+	assert.True(t, expected.Start().Equal(actual.Start()))
+	assert.True(t, expected.End().Equal(actual.End()))
+}
+
 func TestVisitPeriod_CalculatePrice(t *testing.T) {
 	now := time.Now()
 	visitStart := now.Add(-3 * time.Hour)

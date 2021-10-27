@@ -6,6 +6,7 @@ import (
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/visit_repository"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func All(c *gin.Context) {
@@ -13,7 +14,14 @@ func All(c *gin.Context) {
 
 	visits := repository.GetAll()
 
-	c.JSON(http.StatusOK, visit.MarshalAll(visits))
+	response, responseErr := visit.MarshalAll(visits)
+
+	if nil != responseErr {
+		c.String(http.StatusInternalServerError, "All visits response building error")
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 type createRequest struct {
@@ -31,13 +39,22 @@ func Create(c *gin.Context) {
 
 	if bindingErr != nil {
 		c.String(http.StatusBadRequest, "Invalid request")
+		return
 	}
 
 	createdVisit, createVisitErr := repository.CreateVisit(request.CafeId)
 
 	if createVisitErr != nil {
 		c.String(http.StatusBadRequest, createVisitErr.Error())
+		return
 	}
 
-	c.JSON(http.StatusOK, createdVisit.Marshal())
+	response, responseErr := createdVisit.Marshal(time.Now())
+
+	if responseErr != nil {
+		c.String(http.StatusInternalServerError, "Response building error")
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
 }

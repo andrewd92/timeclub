@@ -115,7 +115,7 @@ func (v VisitPeriod) timePeriod(pricePeriod *pricePkg.PricePeriod) *time_period.
 	start := utils.AddMinutes(v.start, pricePeriod.From())
 	end := utils.AddMinutes(v.start, pricePeriod.To())
 
-	return time_period.NewTimePeriod(start, end)
+	return time_period.NewTimePeriod(utils.MinTime(start, v.End()), utils.MinTime(end, v.End()))
 }
 
 func NewVisitPeriodFromMinute(start time.Time, end time.Time, firstMinute int) *VisitPeriod {
