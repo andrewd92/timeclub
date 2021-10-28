@@ -1,7 +1,7 @@
 package visit
 
 import (
-	"github.com/andrewd92/timeclub/club_service/domain/client"
+	"github.com/andrewd92/timeclub/club_service/domain/card"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/order_details"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
@@ -13,21 +13,31 @@ import (
 type Visit struct {
 	id           int64
 	start        *time.Time
-	client       *client.Client
 	club         *club.Club
 	orderDetails order_details.OrderDetails
 	comment      string
+	card         *card.Card
+	clientName   string
 }
 
 func NewVisit(
 	id int64,
 	start *time.Time,
-	client *client.Client,
 	club *club.Club,
 	orderDetails order_details.OrderDetails,
 	comment string,
+	card *card.Card,
+	clientName string,
 ) *Visit {
-	return &Visit{id: id, start: start, client: client, club: club, orderDetails: orderDetails, comment: comment}
+	return &Visit{
+		id:           id,
+		start:        start,
+		club:         club,
+		orderDetails: orderDetails,
+		comment:      comment,
+		card:         card,
+		clientName:   clientName,
+	}
 }
 
 func (v Visit) CalculatePrice(priceList *price_list.PriceList, visitEnd time.Time) (float32, error) {
@@ -43,7 +53,7 @@ func (v Visit) CalculatePrice(priceList *price_list.PriceList, visitEnd time.Tim
 		result += period.CalculatePrice(priceList, v.orderDetails)
 	}
 
-	result -= v.client.Card().Discount().From(result)
+	result -= v.card.Discount().From(result)
 
 	return result, nil
 }
@@ -74,10 +84,14 @@ func (v Visit) Start() *time.Time {
 	return v.start
 }
 
-func (v Visit) Client() *client.Client {
-	return v.client
-}
-
 func (v Visit) Club() *club.Club {
 	return v.club
+}
+
+func (v Visit) Card() *card.Card {
+	return v.card
+}
+
+func (v Visit) ClientName() string {
+	return v.clientName
 }

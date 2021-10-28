@@ -1,6 +1,7 @@
 package visit
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/card"
 	"github.com/andrewd92/timeclub/club_service/domain/client"
 	clubPkg "github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/order_details"
@@ -13,24 +14,22 @@ func DefaultVisit() *Visit {
 }
 
 func DefaultVisitFrom(start *time.Time) *Visit {
+	return visit(start, clubPkg.DefaultClub())
+}
+
+func DefaultVisitWithClub(club *clubPkg.Club) *Visit {
+	now := time.Now()
+	return visit(&now, club)
+}
+
+func visit(start *time.Time, club *clubPkg.Club) *Visit {
 	return NewVisit(
 		1,
 		start,
-		client.DefaultClient(),
-		clubPkg.DefaultClub(),
-		order_details.DefaultOrderDetails(),
-		"",
-	)
-}
-
-func VisitWithClub(club *clubPkg.Club) *Visit {
-	now := time.Now()
-	return NewVisit(
-		1,
-		&now,
-		client.DefaultClient(),
 		club,
 		order_details.DefaultOrderDetails(),
 		"",
+		card.DefaultCard(),
+		client.DefaultClient().Name(),
 	)
 }

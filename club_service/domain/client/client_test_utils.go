@@ -7,6 +7,10 @@ import (
 )
 
 func DefaultClient() *Client {
+	return DefaultClientWithCard(card.DefaultCard())
+}
+
+func DefaultClientWithCard(card *card.Card) *Client {
 
 	birthday, _ := time.Parse("2006-01-02", "1990-01-01")
 
@@ -24,6 +28,6 @@ func DefaultClient() *Client {
 		"",
 		time.Now(),
 		0,
-		card.DefaultCard(),
+		card,
 	)
 }

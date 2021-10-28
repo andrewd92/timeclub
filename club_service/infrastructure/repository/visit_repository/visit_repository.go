@@ -1,6 +1,7 @@
 package visit_repository
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/card"
 	"github.com/andrewd92/timeclub/club_service/domain/client"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/event"
@@ -36,7 +37,7 @@ func Instance() visit.Repository {
 	return repository
 }
 
-func (r VisitInMemoryRepository) CreateVisit(clubId int64) (*visit.Visit, error) {
+func (r VisitInMemoryRepository) CreateVisit(clubId int64, cardId int64) (*visit.Visit, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -51,10 +52,11 @@ func (r VisitInMemoryRepository) CreateVisit(clubId int64) (*visit.Visit, error)
 	newVisit := visit.NewVisit(
 		int64(len(r.data)+1),
 		&now,
-		client.DefaultClient(),
 		clubModel,
 		order_details.NewOrderDetails(make([]*event.Event, 0)),
 		"",
+		card.DefaultCardWithId(cardId),
+		client.DefaultClient().Name(),
 	)
 
 	r.data[newVisit.Id()] = newVisit

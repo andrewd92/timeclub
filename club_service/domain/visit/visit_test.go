@@ -48,7 +48,7 @@ func TestVisit_CalculatePrice(t *testing.T) {
 }
 
 func TestVisit_CalculatePriceShouldReturnErrorWhenWrongClubOpenTime(t *testing.T) {
-	visit := VisitWithClub(club.ClubWithWrongOpenTime())
+	visit := DefaultVisitWithClub(club.ClubWithWrongOpenTime())
 
 	end := visit.Start().Add(1 * time.Hour)
 

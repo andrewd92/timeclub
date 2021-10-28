@@ -1,7 +1,6 @@
 package visit_controller
 
 import (
-	"fmt"
 	"github.com/andrewd92/timeclub/club_service/domain/visit"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/visit_repository"
 	"github.com/gin-gonic/gin"
@@ -26,6 +25,7 @@ func All(c *gin.Context) {
 
 type createRequest struct {
 	CafeId int64 `json:"cafe_id"`
+	CardId int64 `json:"card_id"`
 }
 
 func Create(c *gin.Context) {
@@ -35,14 +35,12 @@ func Create(c *gin.Context) {
 
 	bindingErr := c.BindJSON(&request)
 
-	fmt.Println(c.Request.Body)
-
 	if bindingErr != nil {
 		c.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
 
-	createdVisit, createVisitErr := repository.CreateVisit(request.CafeId)
+	createdVisit, createVisitErr := repository.CreateVisit(request.CafeId, request.CardId)
 
 	if createVisitErr != nil {
 		c.String(http.StatusBadRequest, createVisitErr.Error())

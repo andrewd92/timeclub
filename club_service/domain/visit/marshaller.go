@@ -12,6 +12,7 @@ type visitJson struct {
 	Price      float32 `json:"price"`
 	Currency   string  `json:"currency"`
 	Duration   int     `json:"duration"`
+	CardId     int64   `json:"card_id"`
 }
 
 func (v Visit) Marshal(now time.Time) (interface{}, error) {
@@ -24,13 +25,13 @@ func (v Visit) Marshal(now time.Time) (interface{}, error) {
 	return visitJson{
 		Id:         v.id,
 		Start:      v.start.Format("2006-01-02 15:04:05"),
-		ClientId:   v.client.Id(),
-		ClientName: v.client.Name(),
+		ClientName: v.clientName,
 		ClubId:     v.club.Id(),
 		Comment:    v.comment,
 		Price:      price,
 		Currency:   v.club.Currency().ShortName(),
 		Duration:   v.Duration(now),
+		CardId:     v.card.Id(),
 	}, nil
 }
 
