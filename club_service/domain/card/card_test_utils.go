@@ -7,5 +7,5 @@ func DefaultCard() *Card {
 }
 
 func DefaultCardWithId(id int64) *Card {
-	return NewCard(id, discount.NewDiscount(10.0), "Best Client", 1)
+	return NewCard(discount.NewDiscount(10.0), "Best Client", 1).WithId(id)
 }

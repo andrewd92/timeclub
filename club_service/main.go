@@ -1,7 +1,9 @@
 package main
 
-import "github.com/andrewd92/timeclub/club_service/application"
+import (
+	"github.com/andrewd92/timeclub/club_service/server"
+)
 
 func main() {
-	application.StartApplication()
+	server.StartApplication()
 }
