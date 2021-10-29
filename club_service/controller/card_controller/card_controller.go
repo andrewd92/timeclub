@@ -2,6 +2,8 @@ package card_controller
 
 import (
 	"github.com/andrewd92/timeclub/club_service/application"
+	"github.com/andrewd92/timeclub/club_service/domain/card/card_template"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/card_template_repository"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -52,4 +54,14 @@ func MinAvailable(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"card_id": minAvailableCard})
+}
+
+func Templates(c *gin.Context) {
+	repository := card_template_repository.Instance()
+
+	templates := repository.GetAll()
+
+	response := card_template.MarshalAll(templates)
+
+	c.JSON(http.StatusOK, response)
 }

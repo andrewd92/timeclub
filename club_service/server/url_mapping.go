@@ -12,4 +12,5 @@ func mapUrls() {
 	router.POST("/visit", visit_controller.Create)
 	router.POST("/card", card_controller.Create)
 	router.GET("/card/min/:clubId", card_controller.MinAvailable)
+	router.GET("/card/templates", card_controller.Templates)
 }
