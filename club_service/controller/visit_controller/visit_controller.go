@@ -24,7 +24,7 @@ func All(c *gin.Context) {
 }
 
 type createRequest struct {
-	CafeId int64 `json:"cafe_id"`
+	ClubId int64 `json:"club_id"`
 	CardId int64 `json:"card_id"`
 }
 
@@ -40,7 +40,7 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	createdVisit, createVisitErr := repository.CreateVisit(request.CafeId, request.CardId)
+	createdVisit, createVisitErr := repository.CreateVisit(request.ClubId, request.CardId)
 
 	if createVisitErr != nil {
 		c.String(http.StatusBadRequest, createVisitErr.Error())

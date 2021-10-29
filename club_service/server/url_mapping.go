@@ -11,4 +11,5 @@ func mapUrls() {
 	router.GET("/visits", visit_controller.All)
 	router.POST("/visit", visit_controller.Create)
 	router.POST("/card", card_controller.Create)
+	router.GET("/card/min/:clubId", card_controller.MinAvailable)
 }
