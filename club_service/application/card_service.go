@@ -2,20 +2,24 @@ package application
 
 import (
 	"github.com/andrewd92/timeclub/club_service/domain/card"
+	"github.com/andrewd92/timeclub/club_service/domain/card/card_template"
 	discountPkg "github.com/andrewd92/timeclub/club_service/domain/discount"
 	visitPkg "github.com/andrewd92/timeclub/club_service/domain/visit"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/card_repository"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/card_template_repository"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/visit_repository"
 	"sort"
 )
 
 type cardServiceImpl struct {
-	cardRepository  card.Repository
-	visitRepository visitPkg.Repository
+	cardRepository         card.Repository
+	cardTemplateRepository card_template.Repository
+	visitRepository        visitPkg.Repository
 }
 
 type CardService interface {
 	Create(cafeId int64, discount float32, name string) (interface{}, error)
+	CreateTemplate(clubId int64, discount float32, name string) (interface{}, error)
 	GetMinAvailableCard(clubId int64) (int64, error)
 }
 
@@ -24,8 +28,9 @@ var service CardService
 func CardServiceInstance() CardService {
 	if nil == service {
 		service = &cardServiceImpl{
-			cardRepository:  card_repository.Instance(),
-			visitRepository: visit_repository.Instance(),
+			cardRepository:         card_repository.Instance(),
+			cardTemplateRepository: card_template_repository.Instance(),
+			visitRepository:        visit_repository.Instance(),
 		}
 	}
 
@@ -41,6 +46,17 @@ func (s cardServiceImpl) Create(clubId int64, discount float32, name string) (in
 	}
 
 	return cardModel.Marshal(), nil
+}
+
+func (s cardServiceImpl) CreateTemplate(clubId int64, discount float32, name string) (interface{}, error) {
+	template := card_template.NewCardTemplate(discountPkg.NewDiscount(discount), name, clubId)
+	templateModel, err := s.cardTemplateRepository.Save(template)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return templateModel.Marshal(), nil
 }
 
 func (s cardServiceImpl) GetMinAvailableCard(clubId int64) (int64, error) {
