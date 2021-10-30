@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/andrewd92/timeclub/club_service/controller/card_controller"
 	"github.com/andrewd92/timeclub/club_service/controller/club_controller"
+	"github.com/andrewd92/timeclub/club_service/controller/event_controller"
 	"github.com/andrewd92/timeclub/club_service/controller/visit_controller"
 )
 
@@ -14,4 +15,6 @@ func mapUrls() {
 	router.GET("/card/min/:clubId", card_controller.MinAvailable)
 	router.GET("/card/templates", card_controller.Templates)
 	router.POST("/card/template", card_controller.CreateTemplate)
+	router.GET("/events", event_controller.All)
+	router.POST("/event", event_controller.Create)
 }
