@@ -1,12 +1,8 @@
 package visit_repository
 
 import (
-	"github.com/andrewd92/timeclub/visit_service/domain/event"
-	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
 	"github.com/andrewd92/timeclub/visit_service/domain/visit"
-	"strconv"
 	"sync"
-	"time"
 )
 
 type VisitInMemoryRepository struct {
@@ -30,25 +26,17 @@ func Instance() visit.Repository {
 	return repository
 }
 
-func (r VisitInMemoryRepository) CreateVisit(clubId int64, cardId int64) (*visit.Visit, error) {
+func (r VisitInMemoryRepository) Save(visit *visit.Visit) (*visit.Visit, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	now := time.Now()
-
 	id := int64(len(r.data) + 1)
-	newVisit := visit.NewVisit(
-		id,
-		&now,
-		clubId,
-		order_details.NewOrderDetails(make([]*event.Event, 0)),
-		"",
-		cardId,
-		"Guest"+strconv.FormatInt(id, 10),
-	)
-	r.data[newVisit.Id()] = newVisit
 
-	return newVisit, nil
+	model := visit.WithId(id)
+
+	r.data[model.Id()] = model
+
+	return model, nil
 }
 
 func (r VisitInMemoryRepository) GetAll() []*visit.Visit {

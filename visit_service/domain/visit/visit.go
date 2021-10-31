@@ -20,7 +20,6 @@ type Visit struct {
 }
 
 func NewVisit(
-	id int64,
 	start *time.Time,
 	clubId int64,
 	orderDetails order_details.OrderDetails,
@@ -29,13 +28,24 @@ func NewVisit(
 	clientName string,
 ) *Visit {
 	return &Visit{
-		id:           id,
 		start:        start,
 		clubId:       clubId,
 		orderDetails: orderDetails,
 		comment:      comment,
 		cardId:       cardId,
 		clientName:   clientName,
+	}
+}
+
+func (v Visit) WithId(id int64) *Visit {
+	return &Visit{
+		id:           id,
+		start:        v.start,
+		clubId:       v.clubId,
+		orderDetails: v.orderDetails,
+		comment:      v.comment,
+		cardId:       v.cardId,
+		clientName:   v.clientName,
 	}
 }
 

@@ -1,12 +1,13 @@
 package visit_controller
 
 import (
+	"github.com/andrewd92/timeclub/visit_service/application/visit_service"
 	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
+	"github.com/andrewd92/timeclub/visit_service/domain/price_list/price"
 	"github.com/andrewd92/timeclub/visit_service/domain/visit"
 	"github.com/andrewd92/timeclub/visit_service/infrastructure/repository/visit_repository"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func All(c *gin.Context) {
@@ -14,7 +15,7 @@ func All(c *gin.Context) {
 
 	visits := repository.GetAll()
 
-	response, responseErr := visit.MarshalAll(visits, price_list.DefaultPriceList())
+	response, responseErr := visit.MarshalAll(visits, price_list.DefaultPriceList(), price.USD())
 
 	if nil != responseErr {
 		c.String(http.StatusInternalServerError, "All visits response building error")
@@ -30,7 +31,7 @@ type createRequest struct {
 }
 
 func Create(c *gin.Context) {
-	repository := visit_repository.Instance()
+	service := visit_service.Instance()
 
 	request := createRequest{}
 
@@ -41,17 +42,10 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	createdVisit, createVisitErr := repository.CreateVisit(request.ClubId, request.CardId)
+	response, createVisitErr := service.Create(request.ClubId, request.CardId)
 
 	if createVisitErr != nil {
-		c.String(http.StatusBadRequest, createVisitErr.Error())
-		return
-	}
-
-	response, responseErr := createdVisit.Marshal(time.Now(), price_list.DefaultPriceList())
-
-	if responseErr != nil {
-		c.String(http.StatusInternalServerError, "Response building error")
+		c.String(http.StatusInternalServerError, createVisitErr.Error())
 		return
 	}
 
