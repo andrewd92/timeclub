@@ -1,0 +1,30 @@
+syntax="proto3";
+
+package api;
+
+option go_package="./api";
+
+service ClubService {
+  rpc GetById(Request) returns (Club) {}
+}
+
+message Request {
+  int64 Id = 1;
+}
+
+message Club {
+  int64 Id = 1;
+  string Name = 2;
+  string OpenTime = 3;
+  string Currency = 4;
+  repeated Price Prices = 5;
+}
+
+message Price {
+    map<string, int32> PricePeriod = 1;
+    float ValuePerMinute = 2;
+    string Currency = 3;
+}
+
+message Empty {}
+

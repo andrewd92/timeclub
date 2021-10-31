@@ -35,5 +35,10 @@ func (v visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error
 		return nil, saveErr
 	}
 
-	return visitModel.Marshal(now, price_list.DefaultPriceList(), price.USD()), nil
+	marshal, marshalErr := visitModel.Marshal(now, price_list.DefaultPriceList(), price.USD())
+	if marshalErr != nil {
+		return nil, marshalErr
+	}
+
+	return marshal, nil
 }

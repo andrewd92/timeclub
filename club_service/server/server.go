@@ -2,7 +2,12 @@ package server
 
 import (
 	"fmt"
+	"github.com/andrewd92/timeclub/club_service/api"
+	"github.com/andrewd92/timeclub/club_service/grpc/club_server"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"log"
+	"net"
 )
 
 var (
@@ -10,10 +15,29 @@ var (
 )
 
 func StartApplication() {
+	go runGrpcServer()
+	runHttpServer()
+}
+
+func runHttpServer() {
 	mapUrls()
 
 	err := router.Run(":8080")
 	if err != nil {
 		fmt.Println("Err: ", err.Error())
 	}
+}
+
+func runGrpcServer() {
+	listen, listenErr := net.Listen("tcp", ":9080")
+	if listenErr != nil {
+		log.Fatalf("failed to listen: %v", listenErr)
+	}
+
+	grpcServer := grpc.NewServer()
+	api.RegisterClubServiceServer(grpcServer, club_server.Instance())
+	//run grpc on :9090
+
+	log.Println("Listen and serve GRPC on :9080")
+	grpcServer.Serve(listen)
 }
