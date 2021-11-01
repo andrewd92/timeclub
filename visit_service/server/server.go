@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/andrewd92/timeclub/visit_service/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +13,7 @@ var (
 func StartApplication() {
 	mapUrls()
 
-	err := router.Run(":8081")
+	err := router.Run(":" + config.Instance().Server.Port.Http)
 	if err != nil {
 		fmt.Println("Err: ", err.Error())
 	}

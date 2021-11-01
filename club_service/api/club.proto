@@ -21,9 +21,14 @@ message Club {
 }
 
 message Price {
-    map<string, int32> PricePeriod = 1;
+    PricePeriod PricePeriod = 1;
     float ValuePerMinute = 2;
-    string Currency = 3;
+    int64 Currency = 3;
+}
+
+message PricePeriod {
+  int32 From = 1;
+  int32 To = 2;
 }
 
 message Empty {}

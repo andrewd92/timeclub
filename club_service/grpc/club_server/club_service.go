@@ -1,7 +1,7 @@
 package club_server
 
 import (
-	context "context"
+	"context"
 	"github.com/andrewd92/timeclub/club_service/api"
 	clubPkg "github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/club_repository"
@@ -34,14 +34,15 @@ func (c ClubServerImpl) GetById(ctx context.Context, request *api.Request) (*api
 	prices := make([]*api.Price, 0, len(priceList.Prices()))
 
 	for _, price := range priceList.Prices() {
-		pricePeriod := map[string]int32{
-			"from": int32(price.PricePeriod().From()),
-			"to":   int32(price.PricePeriod().To()),
+		pricePeriod := &api.PricePeriod{
+			From: int32(price.PricePeriod().From()),
+			To:   int32(price.PricePeriod().To()),
 		}
+
 		prices = append(prices, &api.Price{
 			PricePeriod:    pricePeriod,
 			ValuePerMinute: price.ValuePerMinute(),
-			Currency:       price.Currency().ShortName(),
+			Currency:       price.Currency().Id(),
 		})
 	}
 
