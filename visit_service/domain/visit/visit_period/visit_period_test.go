@@ -1,11 +1,11 @@
 package visit_period
 
 import (
+	"github.com/andrewd92/timeclub/club_service/api"
 	"github.com/andrewd92/timeclub/visit_service/domain/event"
 	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list/price"
 	"github.com/andrewd92/timeclub/visit_service/domain/time_period"
+	"github.com/andrewd92/timeclub/visit_service/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -92,7 +92,7 @@ func TestVisitPeriod_Period(t *testing.T) {
 		start.Add(2*time.Minute),
 	)
 
-	actual := period.timePeriod(price.NewPricePeriod(1, 2))
+	actual := period.timePeriod(&api.PricePeriod{From: 1, To: 2})
 
 	assert.True(t, expected.Start().Equal(actual.Start()))
 	assert.True(t, expected.End().Equal(actual.End()))
@@ -107,7 +107,7 @@ func TestVisitPeriod_PeriodWhenPricePeriodGreaterThenVisitPeriod(t *testing.T) {
 		start.Add(time.Hour),
 	)
 
-	actual := period.timePeriod(price.NewPricePeriod(0, 60*24))
+	actual := period.timePeriod(&api.PricePeriod{From: 0, To: 60 * 24})
 
 	assert.True(t, expected.Start().Equal(actual.Start()))
 	assert.True(t, expected.End().Equal(actual.End()))
@@ -117,18 +117,28 @@ func TestVisitPeriod_CalculatePrice(t *testing.T) {
 	now := time.Now()
 	visitStart := now.Add(-3 * time.Hour)
 	period := NewVisitPeriod(visitStart, now.Add(-1*time.Hour))
-	priceList := price_list.DefaultPriceList()
+	prices := []*api.Price{utils.DefaultPrice()}
 
 	eventStart := visitStart.Add(30 * time.Minute)
 	events := []*event.Event{event.DefaultEventFrom(&eventStart)}
 	details := order_details.NewOrderDetails(events)
 
-	actual := period.CalculatePrice(priceList, details)
+	actual := period.CalculatePrice(prices, details)
 
 	discountFromEvent := float32(30)
-	expected := price.DefaultPriceValue*float32(price.DefaultPricePeriodDurationMinutes) - discountFromEvent
+	expected := utils.DefaultPriceValue*float32(utils.DefaultPricePeriodDurationMinutes) - discountFromEvent
 
 	assert.Equal(t, expected, actual)
+}
+
+func TestCalculatePriceForPeriod(t *testing.T) {
+	price := utils.DefaultPrice()
+
+	now := time.Now()
+
+	timePeriod := time_period.NewTimePeriod(now, now.Add(time.Hour))
+
+	assert.Equal(t, float32(600), calculatePriceForPeriod(price, timePeriod))
 }
 
 func assertVisitPeriodsEquals(t *testing.T, expected []*VisitPeriod, actual []*VisitPeriod) {

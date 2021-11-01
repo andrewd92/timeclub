@@ -49,7 +49,7 @@ func SplitTimeString(timeString string) (int, int, error) {
 	return int(hour), int(minute), nil
 }
 
-func AddMinutes(initDate time.Time, minutes int) time.Time {
+func AddMinutes(initDate time.Time, minutes int32) time.Time {
 	return time.Date(
 		initDate.Year(),
 		initDate.Month(),

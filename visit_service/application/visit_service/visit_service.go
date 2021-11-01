@@ -1,25 +1,42 @@
 package visit_service
 
 import (
-	"github.com/andrewd92/timeclub/club_service/api"
 	"github.com/andrewd92/timeclub/visit_service/client/club_service"
 	"github.com/andrewd92/timeclub/visit_service/domain/event"
 	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
-	pricePkg "github.com/andrewd92/timeclub/visit_service/domain/price_list/price"
 	"github.com/andrewd92/timeclub/visit_service/domain/visit"
+	"log"
 	"time"
 )
 
 type VisitService interface {
 	Create(clubId int64, cardId int64) (interface{}, error)
+	All(id int64) ([]interface{}, error)
 }
 
 type visitServiceImpl struct {
 	visitRepository visit.Repository
 }
 
-func (v visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error) {
+func (s visitServiceImpl) All(id int64) ([]interface{}, error) {
+	visits := s.visitRepository.GetAll()
+
+	club, clubServiceErr := club_service.GetById(id)
+	if nil != clubServiceErr {
+		return nil, clubServiceErr
+	}
+
+	response, responseErr := visit.MarshalAll(visits, club)
+
+	if nil != responseErr {
+		log.Printf("All visits response building error: %v", responseErr)
+		return nil, responseErr
+	}
+
+	return response, nil
+}
+
+func (s visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error) {
 	now := time.Now()
 
 	newVisit := visit.NewVisit(
@@ -31,7 +48,7 @@ func (v visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error
 		"Guest",
 	)
 
-	visitModel, saveErr := v.visitRepository.Save(newVisit)
+	visitModel, saveErr := s.visitRepository.Save(newVisit)
 
 	if nil != saveErr {
 		return nil, saveErr
@@ -42,24 +59,10 @@ func (v visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error
 		return nil, clubServiceErr
 	}
 
-	priceList := createPriceList(club)
-
-	marshal, marshalErr := visitModel.Marshal(now.Add(time.Hour), priceList, pricePkg.USD())
+	marshal, marshalErr := visitModel.Marshal(now, club)
 	if marshalErr != nil {
 		return nil, marshalErr
 	}
 
 	return marshal, nil
-}
-
-func createPriceList(club *api.Club) *price_list.PriceList {
-	prices := make([]*pricePkg.Price, 0, len(club.Prices))
-
-	for _, priceResponse := range club.Prices {
-		pricePeriod := pricePkg.NewPricePeriod(int(priceResponse.PricePeriod.From), int(priceResponse.PricePeriod.To))
-		price := pricePkg.NewPrice(pricePeriod, priceResponse.ValuePerMinute, pricePkg.USD())
-		prices = append(prices, price)
-	}
-
-	return price_list.NewPriceList(prices)
 }

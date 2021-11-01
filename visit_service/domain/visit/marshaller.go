@@ -1,9 +1,8 @@
 package visit
 
 import (
+	"github.com/andrewd92/timeclub/club_service/api"
 	"github.com/andrewd92/timeclub/visit_service/domain/discount"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
-	pricePkg "github.com/andrewd92/timeclub/visit_service/domain/price_list/price"
 	"time"
 )
 
@@ -20,8 +19,8 @@ type visitJson struct {
 	CardId     int64   `json:"card_id"`
 }
 
-func (v Visit) Marshal(now time.Time, priceList *price_list.PriceList, currency *pricePkg.Currency) (interface{}, error) {
-	price, err := v.CalculatePrice(priceList, now, "12:00", *discount.NewDiscount(10.0))
+func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
+	price, err := v.CalculatePrice(club, now, *discount.NewDiscount(10.0))
 
 	if err != nil {
 		return nil, err
@@ -34,20 +33,20 @@ func (v Visit) Marshal(now time.Time, priceList *price_list.PriceList, currency 
 		ClubId:     v.ClubId(),
 		Comment:    v.comment,
 		Price:      price,
-		Currency:   currency.ShortName(),
+		Currency:   "$",
 		Duration:   v.Duration(now),
 		CardId:     v.CardId(),
 	}, nil
 }
 
-func MarshalAll(visits []*Visit, priceList *price_list.PriceList, currency *pricePkg.Currency) ([]interface{}, error) {
+func MarshalAll(visits []*Visit, club *api.Club) ([]interface{}, error) {
 	result := make([]interface{}, len(visits))
 
 	now := time.Now()
 
 	for i, visit := range visits {
 
-		json, err := visit.Marshal(now, priceList, currency)
+		json, err := visit.Marshal(now, club)
 
 		if err != nil {
 			return nil, err

@@ -1,9 +1,9 @@
 package visit
 
 import (
+	"github.com/andrewd92/timeclub/club_service/api"
 	"github.com/andrewd92/timeclub/visit_service/domain/discount"
 	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
 	"github.com/andrewd92/timeclub/visit_service/domain/visit/visit_period"
 	"math"
 	"time"
@@ -49,8 +49,8 @@ func (v Visit) WithId(id int64) *Visit {
 	}
 }
 
-func (v Visit) CalculatePrice(priceList *price_list.PriceList, visitEnd time.Time, openTime string, cardDiscount discount.Discount) (float32, error) {
-	visitPeriods, splitErr := v.Period(visitEnd).Split(openTime)
+func (v Visit) CalculatePrice(club *api.Club, visitEnd time.Time, cardDiscount discount.Discount) (float32, error) {
+	visitPeriods, splitErr := v.Period(visitEnd).Split(club.OpenTime)
 
 	if nil != splitErr {
 		return 0, splitErr
@@ -59,7 +59,7 @@ func (v Visit) CalculatePrice(priceList *price_list.PriceList, visitEnd time.Tim
 	var result float32 = 0
 
 	for _, period := range visitPeriods {
-		result += period.CalculatePrice(priceList, v.orderDetails)
+		result += period.CalculatePrice(club.Prices, v.orderDetails)
 	}
 
 	result -= cardDiscount.From(result)

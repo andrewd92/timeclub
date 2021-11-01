@@ -2,20 +2,14 @@ package visit_controller
 
 import (
 	"github.com/andrewd92/timeclub/visit_service/application/visit_service"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list/price"
-	"github.com/andrewd92/timeclub/visit_service/domain/visit"
-	"github.com/andrewd92/timeclub/visit_service/infrastructure/repository/visit_repository"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func All(c *gin.Context) {
-	repository := visit_repository.Instance()
+	service := visit_service.Instance()
 
-	visits := repository.GetAll()
-
-	response, responseErr := visit.MarshalAll(visits, price_list.DefaultPriceList(), price.USD())
+	response, responseErr := service.All(1)
 
 	if nil != responseErr {
 		c.String(http.StatusInternalServerError, "All visits response building error")

@@ -1,9 +1,8 @@
 package visit_period
 
 import (
+	"github.com/andrewd92/timeclub/club_service/api"
 	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
-	"github.com/andrewd92/timeclub/visit_service/domain/price_list"
-	pricePkg "github.com/andrewd92/timeclub/visit_service/domain/price_list/price"
 	"github.com/andrewd92/timeclub/visit_service/domain/time_period"
 	"github.com/andrewd92/timeclub/visit_service/utils"
 	"time"
@@ -93,27 +92,31 @@ func (v VisitPeriod) Duration() int {
 	return utils.FloorFloat64ToInt(durationOfMinutes)
 }
 
-func (v VisitPeriod) CalculatePrice(priceList *price_list.PriceList, details order_details.OrderDetails) float32 {
+func (v VisitPeriod) CalculatePrice(prices []*api.Price, details order_details.OrderDetails) float32 {
 	var result float32 = 0
 
-	for _, price := range priceList.Prices() {
-		timePeriod := v.timePeriod(price.PricePeriod())
+	for _, price := range prices {
+		timePeriod := v.timePeriod(price.PricePeriod)
 
 		discount := float32(0)
 
 		for _, event := range details.Events() {
-			discount += event.CalculateDiscount(timePeriod, price.ValuePerMinute())
+			discount += event.CalculateDiscount(timePeriod, price.ValuePerMinute)
 		}
 
-		result += price.CalculateForPeriod(*timePeriod) - discount
+		result += calculatePriceForPeriod(price, timePeriod) - discount
 	}
 
 	return result
 }
 
-func (v VisitPeriod) timePeriod(pricePeriod *pricePkg.PricePeriod) *time_period.TimePeriod {
-	start := utils.AddMinutes(v.start, pricePeriod.From())
-	end := utils.AddMinutes(v.start, pricePeriod.To())
+func calculatePriceForPeriod(price *api.Price, timePeriod *time_period.TimePeriod) float32 {
+	return float32(timePeriod.DurationMinutes()) * price.ValuePerMinute
+}
+
+func (v VisitPeriod) timePeriod(pricePeriod *api.PricePeriod) *time_period.TimePeriod {
+	start := utils.AddMinutes(v.start, pricePeriod.From)
+	end := utils.AddMinutes(v.start, pricePeriod.To)
 
 	return time_period.NewTimePeriod(utils.MinTime(start, v.End()), utils.MinTime(end, v.End()))
 }
