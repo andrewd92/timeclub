@@ -24,7 +24,7 @@ func Instance() (club.Repository, error) {
 	}
 
 	currency, getCurrencyErr := currency_repository.Instance().GetById(1)
-	if getCurrencyErr == nil {
+	if getCurrencyErr != nil {
 		return nil, getCurrencyErr
 	}
 

@@ -33,7 +33,7 @@ func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
 		ClubId:     v.ClubId(),
 		Comment:    v.comment,
 		Price:      price,
-		Currency:   "$",
+		Currency:   club.Currency.ShortName,
 		Duration:   v.Duration(now),
 		CardId:     v.CardId(),
 	}, nil

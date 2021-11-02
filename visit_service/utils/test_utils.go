@@ -4,13 +4,13 @@ import "github.com/andrewd92/timeclub/club_service/api"
 
 func DefaultClub() *api.Club {
 	return &api.Club{
-		Id: 1, Name: "Test Club", OpenTime: "12:00", Prices: []*api.Price{DefaultPrice()}, Currency: "1",
+		Id: 1, Name: "Test Club", OpenTime: "12:00", Prices: []*api.Price{DefaultPrice()},
 	}
 }
 
 func ClubWithWrongOpenTime() *api.Club {
 	return &api.Club{
-		Id: 1, Name: "Test Club", OpenTime: "12:00:00", Prices: []*api.Price{DefaultPrice()}, Currency: "1",
+		Id: 1, Name: "Test Club", OpenTime: "12:00:00", Prices: []*api.Price{DefaultPrice()},
 	}
 }
 
@@ -24,6 +24,5 @@ func DefaultPrice() *api.Price {
 			To:   DefaultPricePeriodDurationMinutes,
 		},
 		ValuePerMinute: DefaultPriceValue,
-		Currency:       1,
 	}
 }

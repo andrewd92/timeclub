@@ -48,7 +48,6 @@ func (c ClubServerImpl) GetById(_ context.Context, request *api.Request) (*api.C
 		prices = append(prices, &api.Price{
 			PricePeriod:    pricePeriod,
 			ValuePerMinute: price.ValuePerMinute(),
-			Currency:       club.Currency().Id(),
 		})
 	}
 
@@ -56,7 +55,7 @@ func (c ClubServerImpl) GetById(_ context.Context, request *api.Request) (*api.C
 		Id:       club.Id(),
 		Name:     club.Name(),
 		OpenTime: club.OpenTime(),
-		Currency: club.Currency().ShortName(),
+		Currency: &api.Currency{Name: club.Currency().Name(), ShortName: club.Currency().ShortName()},
 		Prices:   prices,
 	}, nil
 }

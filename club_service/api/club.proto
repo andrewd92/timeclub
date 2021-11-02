@@ -16,19 +16,23 @@ message Club {
   int64 Id = 1;
   string Name = 2;
   string OpenTime = 3;
-  string Currency = 4;
+  Currency Currency = 4;
   repeated Price Prices = 5;
 }
 
 message Price {
     PricePeriod PricePeriod = 1;
     float ValuePerMinute = 2;
-    int64 Currency = 3;
 }
 
 message PricePeriod {
   int32 From = 1;
   int32 To = 2;
+}
+
+message Currency {
+  string Name = 1;
+  string ShortName = 2;
 }
 
 message Empty {}
