@@ -40,7 +40,7 @@ func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
 }
 
 func MarshalAll(visits []*Visit, club *api.Club) ([]interface{}, error) {
-	result := make([]interface{}, len(visits))
+	result := make([]interface{}, 0, len(visits))
 
 	now := time.Now()
 
