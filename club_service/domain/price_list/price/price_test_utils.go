@@ -7,6 +7,5 @@ func DefaultPrice() *Price {
 	return NewPrice(
 		NewPricePeriod(0, DefaultPricePeriodDurationMinutes),
 		DefaultPriceValue,
-		USD(),
 	)
 }

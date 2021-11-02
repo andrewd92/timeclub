@@ -1,8 +1,8 @@
 package club
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/currency"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
-	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
 )
 
 type Club struct {
@@ -10,14 +10,14 @@ type Club struct {
 	name      string
 	openTime  string
 	priceList *price_list.PriceList
-	currency  *price.Currency
+	currency  *currency.Currency
 }
 
-func NewClub(id int64, name string, openTime string, priceList *price_list.PriceList, currency *price.Currency) *Club {
+func NewClub(id int64, name string, openTime string, priceList *price_list.PriceList, currency *currency.Currency) *Club {
 	return &Club{id: id, name: name, openTime: openTime, priceList: priceList, currency: currency}
 }
 
-func (c Club) Currency() *price.Currency {
+func (c Club) Currency() *currency.Currency {
 	return c.currency
 }
 

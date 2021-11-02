@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
+	"github.com/andrewd92/timeclub/club_service/domain/currency"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
 	"sync"
@@ -22,9 +23,9 @@ func Instance() club.Repository {
 		return repository
 	}
 
-	usd := price.USD()
+	usd := currency.USD()
 	priceList := price_list.NewPriceList([]*price.Price{
-		price.NewPrice(price.NewPricePeriod(0, 360), 10, usd),
+		price.NewPrice(price.NewPricePeriod(0, 360), 10),
 	})
 
 	repository = &ClubInMemoryRepository{

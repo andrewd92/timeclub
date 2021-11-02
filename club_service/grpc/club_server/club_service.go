@@ -23,7 +23,7 @@ type ClubServerImpl struct {
 	clubRepository clubPkg.Repository
 }
 
-func (c ClubServerImpl) GetById(ctx context.Context, request *api.Request) (*api.Club, error) {
+func (c ClubServerImpl) GetById(_ context.Context, request *api.Request) (*api.Club, error) {
 	club, err := c.clubRepository.GetById(request.Id)
 
 	if err != nil {
@@ -42,7 +42,7 @@ func (c ClubServerImpl) GetById(ctx context.Context, request *api.Request) (*api
 		prices = append(prices, &api.Price{
 			PricePeriod:    pricePeriod,
 			ValuePerMinute: price.ValuePerMinute(),
-			Currency:       price.Currency().Id(),
+			Currency:       club.Currency().Id(),
 		})
 	}
 

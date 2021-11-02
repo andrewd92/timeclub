@@ -15,6 +15,5 @@ func (p Price) Marshal() interface{} {
 	return priceJson{
 		PricePeriod:    pricePeriod,
 		ValuePerMinute: p.valuePerMinute,
-		Currency:       p.currency.name,
 	}
 }

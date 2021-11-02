@@ -1,4 +1,4 @@
-package price
+package currency
 
 type Currency struct {
 	id        int64
