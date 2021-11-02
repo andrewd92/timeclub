@@ -35,9 +35,18 @@ func runGrpcServer() {
 	}
 
 	grpcServer := grpc.NewServer()
-	api.RegisterClubServiceServer(grpcServer, club_server.Instance())
+	clubServer, clubServerErr := club_server.Instance()
+
+	if clubServerErr != nil {
+		log.Fatal(clubServerErr)
+	}
+
+	api.RegisterClubServiceServer(grpcServer, clubServer)
 	//run grpc on :9090
 
 	log.Println("Listen and serve GRPC on :9080")
-	grpcServer.Serve(listen)
+	err := grpcServer.Serve(listen)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

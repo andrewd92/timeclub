@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
-	"github.com/andrewd92/timeclub/club_service/domain/currency"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/currency_repository"
 	"sync"
 )
 
@@ -18,24 +18,28 @@ type ClubInMemoryRepository struct {
 
 var repository club.Repository
 
-func Instance() club.Repository {
+func Instance() (club.Repository, error) {
 	if nil != repository {
-		return repository
+		return repository, nil
 	}
 
-	usd := currency.USD()
+	currency, getCurrencyErr := currency_repository.Instance().GetById(1)
+	if getCurrencyErr == nil {
+		return nil, getCurrencyErr
+	}
+
 	priceList := price_list.NewPriceList([]*price.Price{
 		price.NewPrice(price.NewPricePeriod(0, 360), 10),
 	})
 
 	repository = &ClubInMemoryRepository{
 		data: map[int64]*club.Club{
-			int64(1): club.NewClub(1, "System", "8:00", priceList, usd),
+			int64(1): club.NewClub(1, "System", "8:00", priceList, currency),
 		},
 		lock: &sync.RWMutex{},
 	}
 
-	return repository
+	return repository, nil
 }
 
 func (r ClubInMemoryRepository) GetAll() []*club.Club {
@@ -56,9 +60,8 @@ func (r ClubInMemoryRepository) GetById(id int64) (*club.Club, error) {
 	defer r.lock.RUnlock()
 
 	clubModel, ok := r.data[id]
-	fmt.Println(ok)
 	if false == ok {
-		return nil, errors.New("clubModel not exists")
+		return nil, errors.New(fmt.Sprintf("Club not exists in storage. ID: %d", id))
 	}
 
 	return clubModel, nil

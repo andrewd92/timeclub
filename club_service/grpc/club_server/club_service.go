@@ -9,14 +9,20 @@ import (
 
 var server *ClubServerImpl
 
-func Instance() *ClubServerImpl {
+func Instance() (*ClubServerImpl, error) {
 	if nil == server {
+		clubRepository, err := club_repository.Instance()
+
+		if err != nil {
+			return nil, err
+		}
+
 		server = &ClubServerImpl{
-			clubRepository: club_repository.Instance(),
+			clubRepository: clubRepository,
 		}
 	}
 
-	return server
+	return server, nil
 }
 
 type ClubServerImpl struct {

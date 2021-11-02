@@ -6,7 +6,7 @@ import (
 )
 
 func TestClubInMemoryRepository_getAll(t *testing.T) {
-	repository := Instance()
+	repository, _ := Instance()
 
 	all := repository.GetAll()
 	assert.Equal(t, 1, len(all), all)
