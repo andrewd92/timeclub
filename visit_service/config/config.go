@@ -3,6 +3,8 @@ package config
 import (
 	"gopkg.in/yaml.v2"
 	"os"
+	"path"
+	"path/filepath"
 )
 
 type Config struct {
@@ -22,14 +24,18 @@ type Config struct {
 }
 
 var config *Config
-var configFilePath string = "./config.yml"
+var configFilePath = "/visit_service/config.yml"
 
 func Instance() Config {
 	if config != nil {
 		return *config
 	}
 
-	f, err := os.Open(configFilePath)
+	filename, executableErr := filepath.Abs("./")
+	if executableErr != nil {
+		panic(executableErr)
+	}
+	f, err := os.Open(path.Join(path.Dir(filename), configFilePath))
 	if err != nil {
 		panic(err)
 	}
