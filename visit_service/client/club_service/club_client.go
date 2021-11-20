@@ -2,7 +2,7 @@ package club_service
 
 import (
 	"github.com/andrewd92/timeclub/club_service/api"
-	configPkg "github.com/andrewd92/timeclub/visit_service/config"
+	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
@@ -10,9 +10,9 @@ import (
 )
 
 func GetById(id int64) (*api.Club, error) {
-	config := configPkg.Instance()
+	url := viper.GetString("client.club.grpc.url")
 
-	conn, err := grpc.Dial(config.Client.Club.Grpc.Url, grpc.WithInsecure())
+	conn, err := grpc.Dial(url, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("fail to dial: %v", err)
 		return nil, err
