@@ -2,10 +2,10 @@ package club_service
 
 import (
 	"github.com/andrewd92/timeclub/club_service/api"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"log"
 	"time"
 )
 
@@ -14,7 +14,7 @@ func GetById(id int64) (*api.Club, error) {
 
 	conn, err := grpc.Dial(url, grpc.WithInsecure())
 	if err != nil {
-		log.Printf("fail to dial: %v", err)
+		log.WithError(err).Error("Fail to dial club server")
 		return nil, err
 	}
 	defer conn.Close()
@@ -27,7 +27,7 @@ func GetById(id int64) (*api.Club, error) {
 	club, err := client.GetById(ctx, &api.Request{Id: id})
 
 	if nil != err {
-		log.Printf("fail to get club by id #%d. Err: %v", id, err)
+		log.WithError(err).WithField("id", id).Error("Fail to get club by id")
 		return nil, err
 	}
 

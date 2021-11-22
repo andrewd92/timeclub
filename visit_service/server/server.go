@@ -1,11 +1,10 @@
 package server
 
 import (
-	"fmt"
 	"github.com/andrewd92/timeclub/visit_service/config"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 )
 
@@ -20,13 +19,13 @@ func StartApplication() {
 
 	port := viper.GetString("server.port.http")
 
-	log.Printf("ENV port :%s", viper.GetString("SERVER_PORT_HTTP"))
-	fmt.Println("ENV: ", os.Getenv("SERVER_PORT_HTTP"))
+	log.WithField("port", viper.GetString("SERVER_PORT_HTTP")).Info("HTTP port overridden by config")
+	log.WithField("port", os.Getenv("SERVER_PORT_HTTP")).Info("HTTP port overridden by env variable")
 
 	err := router.Run(":" + port)
 	if err != nil {
-		fmt.Println("Err: ", err.Error())
+		log.WithError(err).Fatal("Run server error")
 	}
 
-	log.Printf("Server run on port :%s", port)
+	log.Infof("Server run on port :%s", port)
 }

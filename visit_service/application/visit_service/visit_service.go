@@ -5,7 +5,7 @@ import (
 	"github.com/andrewd92/timeclub/visit_service/domain/event"
 	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
 	"github.com/andrewd92/timeclub/visit_service/domain/visit"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -29,7 +29,7 @@ func (s visitServiceImpl) All(id int64) ([]interface{}, error) {
 	response, responseErr := visit.MarshalAll(visits, club)
 
 	if nil != responseErr {
-		log.Printf("All visits response building error: %v", responseErr)
+		log.WithError(responseErr).Error("All visits response building error")
 		return nil, responseErr
 	}
 

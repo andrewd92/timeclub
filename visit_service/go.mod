@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/andrewd92/timeclub/club_service v0.0.0-20211120000600-83a9d6cf475b
 	github.com/gin-gonic/gin v1.7.4
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
