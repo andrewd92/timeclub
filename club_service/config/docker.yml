@@ -9,3 +9,6 @@ service:
 consul:
   enabled: true
   port: 8500
+  check:
+    interval: '5s'
+    timeout: '3s'

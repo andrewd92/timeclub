@@ -31,8 +31,8 @@ func registerServiceWithConsul() {
 
 	registration.Check = new(consulapi.AgentServiceCheck)
 	registration.Check.HTTP = fmt.Sprintf("http://%s:%d/health", address, port())
-	registration.Check.Interval = "20s"
-	registration.Check.Timeout = "3s"
+	registration.Check.Interval = viper.GetString("consul.check.interval")
+	registration.Check.Timeout = viper.GetString("consul.check.timeout")
 
 	registrationErr := consul.Agent().ServiceRegister(registration)
 	if registrationErr != nil {
