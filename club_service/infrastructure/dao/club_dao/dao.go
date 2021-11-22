@@ -1,14 +1,13 @@
 package club_dao
 
 import (
-	"github.com/jmoiron/sqlx"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 const (
 	selectAll  = "SELECT * FROM club"
-	selectById = "SELECT * FROM club WHERE id = $1"
+	selectById = "SELECT * FROM club WHERE id = ?"
 )
 
 type ClubModel struct {
@@ -23,7 +22,7 @@ type ClubDao struct {
 }
 
 func (d ClubDao) GetAll() ([]*ClubModel, error) {
-	db, connectionErr := getConnection()
+	db, connectionErr := connection.Get()
 	if connectionErr != nil {
 		return nil, connectionErr
 	}
@@ -40,31 +39,18 @@ func (d ClubDao) GetAll() ([]*ClubModel, error) {
 }
 
 func (d ClubDao) GetById(id int64) (*ClubModel, error) {
-	db, connectionErr := getConnection()
+	db, connectionErr := connection.Get()
 	if connectionErr != nil {
 		return nil, connectionErr
 	}
 
 	var model *ClubModel
 
-	selectErr := db.Get(model, selectById, id)
+	selectErr := db.Get(&model, selectById, id)
 	if selectErr != nil {
 		log.WithError(selectErr).WithField("query", selectAll).Error("Can not select club entry from db")
 		return nil, selectErr
 	}
 
 	return model, nil
-}
-
-func getConnection() (*sqlx.DB, error) {
-	dbUrl := viper.GetString("db.url")
-
-	db, err := sqlx.Connect("mysql", dbUrl)
-
-	if err != nil {
-		log.WithError(err).Error("Can not connect to db.")
-		return nil, err
-	}
-
-	return db, nil
 }

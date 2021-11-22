@@ -8,7 +8,8 @@ import (
 )
 
 type ClubDBRepository struct {
-	dao *club_dao.ClubDao
+	dao                 *club_dao.ClubDao
+	priceListRepository price_list.Repository
 }
 
 func (r ClubDBRepository) GetAll() ([]*club.Club, error) {
@@ -20,7 +21,12 @@ func (r ClubDBRepository) GetAll() ([]*club.Club, error) {
 	result := make([]*club.Club, 0, len(clubModels))
 
 	for _, clubModel := range clubModels {
-		result = append(result, convertModelToEntity(clubModel))
+		priceList, err := r.priceListRepository.GetById(clubModel.PriceListId)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, convertModelToEntity(clubModel, priceList))
 	}
 
 	return result, nil
@@ -32,9 +38,14 @@ func (r ClubDBRepository) GetById(id int64) (*club.Club, error) {
 		return nil, err
 	}
 
-	return convertModelToEntity(clubModel), nil
+	priceList, err := r.priceListRepository.GetById(clubModel.PriceListId)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertModelToEntity(clubModel, priceList), nil
 }
 
-func convertModelToEntity(model *club_dao.ClubModel) *club.Club {
-	return club.NewClub(model.Id, model.Name, model.OpenTime, price_list.Empty(), currency.USD())
+func convertModelToEntity(model *club_dao.ClubModel, priceList *price_list.PriceList) *club.Club {
+	return club.NewClub(model.Id, model.Name, model.OpenTime, priceList, currency.USD())
 }
