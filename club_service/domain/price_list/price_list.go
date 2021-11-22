@@ -35,3 +35,9 @@ func NewPriceList(prices []*pricePkg.Price) *PriceList {
 
 	return &PriceList{prices: prices, max: max}
 }
+
+func Empty() *PriceList {
+	prices := make([]*pricePkg.Price, 0)
+
+	return &PriceList{prices: prices, max: 0}
+}
