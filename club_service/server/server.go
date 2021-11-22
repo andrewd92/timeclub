@@ -7,7 +7,6 @@ import (
 	"github.com/andrewd92/timeclub/club_service/infrastructure/migration"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"net"
 )
@@ -17,10 +16,12 @@ var (
 )
 
 func StartApplication() {
-	initConfig()
 	initLogger()
+	initConfig()
 
 	migration.Run()
+
+	registerServiceWithConsul()
 
 	go runGrpcServer()
 	runHttpServer()
@@ -56,24 +57,4 @@ func runGrpcServer() {
 	if err != nil {
 		log.WithError(err).Fatal("GRPC Server ERROR")
 	}
-}
-
-func initConfig() {
-	viper.SetConfigName("local") // name of config file (without extension)
-	viper.SetConfigType("yaml")  // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath("./")    // path to look for the config file in
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath("./club_service/config")
-	viper.AddConfigPath("$HOME/config") // call multiple times to add many search paths
-	viper.AddConfigPath(".")            // optionally look for config in the working directory
-
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.WithError(err).Fatal("Can not read config file")
-	}
-}
-
-func initLogger() {
-	log.SetFormatter(&log.TextFormatter{ForceColors: true})
 }

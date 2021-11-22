@@ -1,0 +1,11 @@
+db:
+  url: root:root@(db:3306)/timeclub
+
+service:
+  name: "club-service"
+  port: 8080
+  host: "club-service"
+
+consul:
+  enabled: true
+  port: 8500
