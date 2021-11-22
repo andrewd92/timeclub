@@ -4,6 +4,7 @@ import (
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/dao/club_dao"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/currency_repository"
 	"sync"
 )
@@ -11,6 +12,16 @@ import (
 var repository club.Repository
 
 func Instance() (club.Repository, error) {
+	if nil != repository {
+		return repository, nil
+	}
+
+	repository = &ClubDBRepository{dao: &club_dao.ClubDao{}}
+
+	return repository, nil
+}
+
+func InMemoryInstance() (club.Repository, error) {
 	if nil != repository {
 		return repository, nil
 	}
