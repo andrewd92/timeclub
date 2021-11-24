@@ -4,6 +4,7 @@ import (
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/dao/club_dao"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/currency_repository"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/price_list_repository"
@@ -18,7 +19,7 @@ func Instance() (club.Repository, error) {
 	}
 
 	repository = &ClubDBRepository{
-		dao:                 &club_dao.ClubDao{},
+		dao:                 club_dao.NewClubDao(connection.Instance()),
 		priceListRepository: price_list_repository.Instance(),
 	}
 

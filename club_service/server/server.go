@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"net"
+	"strconv"
 )
 
 var (
@@ -30,7 +31,7 @@ func StartApplication() {
 func runHttpServer() {
 	mapUrls()
 
-	err := router.Run(":8080")
+	err := router.Run(":" + strconv.Itoa(port()))
 	if err != nil {
 		fmt.Println("Err: ", err.Error())
 	}

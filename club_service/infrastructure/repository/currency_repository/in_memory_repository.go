@@ -13,24 +13,7 @@ type CurrencyInMemoryRepository struct {
 	lock *sync.RWMutex
 }
 
-var repository currencyPkg.Repository
-
-func Instance() currencyPkg.Repository {
-	if nil != repository {
-		return repository
-	}
-
-	repository = &CurrencyInMemoryRepository{
-		data: map[int64]*currencyPkg.Currency{
-			int64(1): currencyPkg.USD(),
-		},
-		lock: &sync.RWMutex{},
-	}
-
-	return repository
-}
-
-func (r CurrencyInMemoryRepository) GetAll() []*currencyPkg.Currency {
+func (r CurrencyInMemoryRepository) GetAll() ([]*currencyPkg.Currency, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
@@ -40,7 +23,7 @@ func (r CurrencyInMemoryRepository) GetAll() []*currencyPkg.Currency {
 		result = append(result, value)
 	}
 
-	return result
+	return result, nil
 }
 
 func (r CurrencyInMemoryRepository) GetById(id int64) (*currencyPkg.Currency, error) {

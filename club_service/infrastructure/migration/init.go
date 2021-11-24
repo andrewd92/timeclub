@@ -21,8 +21,18 @@ const price = `CREATE TABLE IF NOT EXISTS price (
     INDEX (price_list_id)
 );
 `
+const currency = `CREATE TABLE IF NOT EXISTS currency (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    short_name VARCHAR(255) NOT NULL
+);
+`
+const USD = `INSERT INTO currency(id, name, short_name) VALUES (1, 'US Dollar', 'USD')
+ON DUPLICATE KEY UPDATE name = 'US Dollar', short_name = 'USD'`
 
 func initMigration(db *sqlx.DB) {
 	db.MustExec(club)
 	db.MustExec(price)
+	db.MustExec(currency)
+	db.MustExec(USD)
 }

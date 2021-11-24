@@ -19,10 +19,15 @@ type ClubModel struct {
 }
 
 type ClubDao struct {
+	connection connection.Connection
+}
+
+func NewClubDao(connection connection.Connection) *ClubDao {
+	return &ClubDao{connection: connection}
 }
 
 func (d ClubDao) GetAll() ([]*ClubModel, error) {
-	db, connectionErr := connection.Get()
+	db, connectionErr := d.connection.Get()
 	if connectionErr != nil {
 		return nil, connectionErr
 	}
@@ -39,7 +44,7 @@ func (d ClubDao) GetAll() ([]*ClubModel, error) {
 }
 
 func (d ClubDao) GetById(id int64) (*ClubModel, error) {
-	db, connectionErr := connection.Get()
+	db, connectionErr := d.connection.Get()
 	if connectionErr != nil {
 		return nil, connectionErr
 	}
