@@ -1,0 +1,23 @@
+db:
+  url: root:root@(localhost:3306)/timeclub
+
+service:
+  name: "visit-service"
+
+server:
+  port:
+    http: 8081
+    grpc: 9081
+  host: localhost
+
+client:
+  club:
+    grpc:
+      url: "localhost:9080"
+
+consul:
+  enabled: true
+  port: 8500
+  check:
+    interval: '5s'
+    timeout: '3s'

@@ -1,9 +1,0 @@
-server:
-  port:
-    http: 8081
-    grpc: 9081
-
-client:
-  club:
-    grpc:
-      url: "localhost:9080"
