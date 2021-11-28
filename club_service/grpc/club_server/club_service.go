@@ -7,9 +7,9 @@ import (
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/club_repository"
 )
 
-var server *ClubServerImpl
+var server api.ClubServiceServer
 
-func Instance() (*ClubServerImpl, error) {
+func Instance() (api.ClubServiceServer, error) {
 	if nil == server {
 		clubRepository, err := club_repository.Instance()
 

@@ -2,6 +2,7 @@ package club_dao
 
 import (
 	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
+	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -28,6 +29,12 @@ func NewClubDao(connection connection.Connection) *ClubDao {
 
 func (d ClubDao) GetAll() ([]*ClubModel, error) {
 	db, connectionErr := d.connection.Get()
+	defer func(db *sqlx.DB) {
+		err := db.Close()
+		if err != nil {
+			log.WithError(err).Error("Can not close sql connection")
+		}
+	}(db)
 	if connectionErr != nil {
 		return nil, connectionErr
 	}
@@ -49,9 +56,9 @@ func (d ClubDao) GetById(id int64) (*ClubModel, error) {
 		return nil, connectionErr
 	}
 
-	var model *ClubModel
+	var model = &ClubModel{}
 
-	selectErr := db.Get(&model, selectById, id)
+	selectErr := db.Get(model, selectById, id)
 	if selectErr != nil {
 		log.WithError(selectErr).WithField("query", selectAll).Error("Can not select club entry from db")
 		return nil, selectErr
