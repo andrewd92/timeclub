@@ -1,0 +1,83 @@
+version: '3.7'
+
+services:
+  consul-server:
+    image: consul:1.10
+    container_name: consul-server
+    restart: always
+    networks:
+      - net
+    ports:
+      - '8500:8500'
+      - '8600:8600/tcp'
+      - '8600:8600/udp'
+
+  app-db:
+    image: mysql:5.7.16
+    container_name: app-db
+    restart: always
+    networks:
+      - net
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'timeclub'
+    volumes:
+      - mysql1:/var/lib/mysql
+
+  club-service:
+    image: golang:1.17
+    container_name: club-service
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - go-modules:/go
+    command: bash -c "cd club_service && go mod download && go run ./main.go"
+    environment:
+      VIPER_CONFIG_NAME: 'docker'
+      DB_HOST: 'app-db'
+      SERVICE_HOST: 'club-service'
+      CONSUL_HOST: 'consul-server'
+      CONSUL_CHECK_INTERVAL: '60s'
+      SERVICE_PORT: 8081
+    ports:
+      - '8081:8081'
+    depends_on:
+      - consul-server
+      - app-db
+    networks:
+      - net
+
+  visit-service:
+    image: golang:1.17
+    container_name: visit-service
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - go-modules:/go
+    command: bash -c "cd visit_service && go mod download && go run ./main.go"
+    environment:
+      VIPER_CONFIG_NAME: 'docker'
+      DB_HOST: 'app-db'
+      SERVER_HOST: 'visit-service'
+      CONSUL_HOST: 'consul-server'
+      CONSUL_CHECK_INTERVAL: '60s'
+      SERVER_PORT_HTTP: 8082
+    ports:
+      - '8082:8082'
+    depends_on:
+      - consul-server
+      - app-db
+    networks:
+      - net
+
+volumes:
+  mysql1:
+    driver: local
+  go-modules:
+    driver: local
+
+networks:
+  net:
+    driver: bridge
