@@ -1,5 +1,9 @@
 db:
-  url: root:root@(db:3306)/timeclub
+  user: "root"
+  pass: "root"
+  host: "db"
+  port: "3306"
+  database: "timeclub"
 
 service:
   name: "club-service"
