@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS club (
 	`INSERT INTO club(name, open_time, price_list_id, currency_id) values ('t4', '12:00', 1, 1);`,
 }
 
-var dao *ClubDao
+var dao ClubDao
 
 func TestMain(m *testing.M) {
 	connection.SetTestEnvironment()

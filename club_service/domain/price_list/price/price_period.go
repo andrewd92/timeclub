@@ -21,19 +21,3 @@ func (p PricePeriod) From() int {
 func (p PricePeriod) To() int {
 	return p.to
 }
-
-func (p *PricePeriod) TimeForPay(visitDurationMinutes int) int {
-	if p.from > visitDurationMinutes {
-		return 0
-	}
-
-	if p.to > visitDurationMinutes {
-		return visitDurationMinutes - p.from
-	}
-
-	return p.totalTime()
-}
-
-func (p PricePeriod) totalTime() int {
-	return p.to - p.from
-}

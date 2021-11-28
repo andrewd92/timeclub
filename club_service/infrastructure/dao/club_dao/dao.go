@@ -1,5 +1,7 @@
 package club_dao
 
+//go:generate mockgen -destination=../../../utils/mocks/mock_club_dao.go -package=mocks github.com/andrewd92/timeclub/club_service/infrastructure/dao/club_dao ClubDao
+
 import (
 	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
 	"github.com/jmoiron/sqlx"
@@ -19,15 +21,20 @@ type ClubModel struct {
 	CurrencyId  int64  `db:"currency_id"`
 }
 
-type ClubDao struct {
+type ClubDao interface {
+	GetAll() ([]*ClubModel, error)
+	GetById(id int64) (*ClubModel, error)
+}
+
+type ClubDaoImpl struct {
 	connection connection.Connection
 }
 
-func NewClubDao(connection connection.Connection) *ClubDao {
-	return &ClubDao{connection: connection}
+func NewClubDao(connection connection.Connection) ClubDao {
+	return &ClubDaoImpl{connection: connection}
 }
 
-func (d ClubDao) GetAll() ([]*ClubModel, error) {
+func (d ClubDaoImpl) GetAll() ([]*ClubModel, error) {
 	db, connectionErr := d.connection.Get()
 	defer func(db *sqlx.DB) {
 		err := db.Close()
@@ -50,7 +57,7 @@ func (d ClubDao) GetAll() ([]*ClubModel, error) {
 	return models, nil
 }
 
-func (d ClubDao) GetById(id int64) (*ClubModel, error) {
+func (d ClubDaoImpl) GetById(id int64) (*ClubModel, error) {
 	db, connectionErr := d.connection.Get()
 	if connectionErr != nil {
 		return nil, connectionErr

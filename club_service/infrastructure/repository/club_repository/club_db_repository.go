@@ -8,7 +8,7 @@ import (
 )
 
 type ClubDBRepository struct {
-	dao                 *club_dao.ClubDao
+	dao                 club_dao.ClubDao
 	priceListRepository price_list.Repository
 }
 
