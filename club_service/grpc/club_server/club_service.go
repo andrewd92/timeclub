@@ -11,14 +11,8 @@ var server api.ClubServiceServer
 
 func Instance() (api.ClubServiceServer, error) {
 	if nil == server {
-		clubRepository, err := club_repository.Instance()
-
-		if err != nil {
-			return nil, err
-		}
-
 		server = &ClubServerImpl{
-			clubRepository: clubRepository,
+			clubRepository: club_repository.Instance(),
 		}
 	}
 

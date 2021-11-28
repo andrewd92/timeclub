@@ -9,16 +9,12 @@ import (
 )
 
 func All(c *gin.Context) {
-	clubRepository, err := club_repository.Instance()
-	if err != nil {
-		log.WithError(err).Error("Can not instantiate club repository")
-		c.String(http.StatusInternalServerError, "Server Error")
-	}
+	clubs, getErr := club_repository.Instance().GetAll()
 
-	clubs, getErr := clubRepository.GetAll()
 	if getErr != nil {
 		log.WithError(getErr).Error("Can not find clubs")
 		c.String(http.StatusInternalServerError, "DB error")
+		return
 	}
 
 	c.JSON(http.StatusOK, club.MarshalAll(clubs))

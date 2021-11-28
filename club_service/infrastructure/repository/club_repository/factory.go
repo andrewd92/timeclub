@@ -9,9 +9,9 @@ import (
 
 var repository club.Repository
 
-func Instance() (club.Repository, error) {
+func Instance() club.Repository {
 	if nil != repository {
-		return repository, nil
+		return repository
 	}
 
 	repository = &ClubDBRepository{
@@ -19,5 +19,9 @@ func Instance() (club.Repository, error) {
 		priceListRepository: price_list_repository.Instance(),
 	}
 
-	return repository, nil
+	return repository
+}
+
+func MockTestRepository(mock club.Repository) {
+	repository = mock
 }
