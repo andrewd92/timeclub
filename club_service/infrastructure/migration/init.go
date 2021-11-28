@@ -6,14 +6,6 @@ import (
 )
 
 var transactions = []string{
-	`
-CREATE TABLE IF NOT EXISTS club (
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    open_time VARCHAR(255) NOT NULL,
-    price_list_id INT UNSIGNED,
-    currency_id INT UNSIGNED NOT NULL
-);`,
 	`CREATE TABLE IF NOT EXISTS club (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

@@ -18,7 +18,7 @@ func Instance() Connection {
 	}
 
 	if isTest {
-		connection = RamSqlConnection{}
+		connection = SqliteConnection{connectionIdx: 0}
 	} else {
 		connection = MysqlConnection{}
 	}

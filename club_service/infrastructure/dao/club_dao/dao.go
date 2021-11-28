@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	selectAll  = "SELECT * FROM club"
+	//selectAll  = "SELECT * FROM club"
+	selectAll  = "SELECT club.id, club.name, club.open_time, club.price_list_id, club.currency_id FROM club"
 	selectById = "SELECT * FROM club WHERE id = ?"
 )
 

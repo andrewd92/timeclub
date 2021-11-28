@@ -1,7 +1,9 @@
 package club_dao
 
 import (
+	"fmt"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
+	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -9,11 +11,11 @@ import (
 
 var batch = []string{`
 CREATE TABLE IF NOT EXISTS club (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(255) NOT NULL,
     open_time VARCHAR(255) NOT NULL,
-    price_list_id INT,
-    currency_id INT NOT NULL
+    price_list_id INTEGER,
+    currency_id INTEGER NOT NULL
 );`,
 	`INSERT INTO club(name, open_time, price_list_id, currency_id) values ('t1', '12:00', 1, 1);`,
 	`INSERT INTO club(name, open_time, price_list_id, currency_id) values ('t2', '12:00', 1, 1);`,
@@ -27,9 +29,17 @@ func TestMain(m *testing.M) {
 	connection.SetTestEnvironment()
 	con := connection.Instance()
 	db, _ := con.Get()
+
 	for _, query := range batch {
 		db.MustExec(query)
 	}
+
+	func(db *sqlx.DB) {
+		err := db.Close()
+		if err != nil {
+			fmt.Println("DB close Error: " + err.Error())
+		}
+	}(db)
 
 	dao = NewClubDao(con)
 

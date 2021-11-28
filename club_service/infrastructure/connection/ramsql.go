@@ -10,7 +10,7 @@ type RamSqlConnection struct {
 }
 
 func (c RamSqlConnection) Get() (*sqlx.DB, error) {
-	db, err := sqlx.Connect("ramsql", "Tests")
+	db, err := sqlx.Connect("ramsql", "TestsDB")
 
 	if err != nil {
 		log.WithError(err).Error("Can not connect to db.")

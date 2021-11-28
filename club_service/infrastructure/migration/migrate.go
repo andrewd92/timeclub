@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
+	"os"
 )
 
 func Run() {
@@ -20,5 +21,11 @@ func Run() {
 		log.WithError(err).Fatal("Can not connect to db")
 	}
 
-	initMigration(db)
+	configName := os.Getenv("VIPER_CONFIG_NAME")
+
+	if configName == "test" {
+		initTestMigration(db)
+	} else {
+		initMigration(db)
+	}
 }

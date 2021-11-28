@@ -1,0 +1,10 @@
+db:
+  url: root:root@(localhost:3306)/timeclub
+
+service:
+  name: "club-service"
+  port: 8782
+  host: localhost
+
+consul:
+  enabled: false

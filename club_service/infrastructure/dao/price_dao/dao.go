@@ -21,6 +21,10 @@ type PriceDao struct {
 	connection connection.Connection
 }
 
+func NewPriceDao(connection connection.Connection) *PriceDao {
+	return &PriceDao{connection: connection}
+}
+
 func (d PriceDao) GetByPriceListId(priceListId int64) ([]*PriceModel, error) {
 	db, connectionErr := d.connection.Get()
 	if connectionErr != nil {

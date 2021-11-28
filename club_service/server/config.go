@@ -18,6 +18,7 @@ func initConfig() {
 	viper.SetConfigType("yaml")     // REQUIRED if the config file does not have the extension in the name
 	viper.AddConfigPath("/")        // path to look for the config file in
 	viper.AddConfigPath("./config")
+	viper.AddConfigPath("../config")
 	viper.AddConfigPath("./club_service/config")
 	viper.AddConfigPath("$HOME/config") // call multiple times to add many search paths
 	viper.AddConfigPath(".")            // optionally look for config in the working directory
