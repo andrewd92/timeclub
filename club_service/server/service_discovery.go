@@ -22,7 +22,7 @@ func registerServiceWithConsul() {
 
 	var registration = new(consulapi.AgentServiceRegistration)
 
-	registration.ID = viper.GetString("service.name")
+	registration.ID = hostname()
 	registration.Name = viper.GetString("service.name")
 
 	address := hostname()
