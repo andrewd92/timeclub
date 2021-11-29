@@ -40,9 +40,9 @@ services:
       SERVICE_HOST: 'club-service'
       CONSUL_HOST: 'consul-server'
       CONSUL_CHECK_INTERVAL: '60s'
-      SERVICE_PORT: 8081
+      SERVICE_PORT: 8881
     ports:
-      - '8081:8081'
+      - '8881:8881'
     depends_on:
       - consul-server
       - app-db
@@ -63,9 +63,9 @@ services:
       SERVICE_HOST: 'club-service1'
       CONSUL_HOST: 'consul-server'
       CONSUL_CHECK_INTERVAL: '60s'
-      SERVICE_PORT: 8083
+      SERVICE_PORT: 8883
     ports:
-      - '8083:8083'
+      - '8883:8883'
     depends_on:
       - consul-server
       - app-db
@@ -86,9 +86,9 @@ services:
       SERVER_HOST: 'visit-service'
       CONSUL_HOST: 'consul-server'
       CONSUL_CHECK_INTERVAL: '60s'
-      SERVER_PORT_HTTP: 8082
+      SERVER_PORT_HTTP: 8882
     ports:
-      - '8082:8082'
+      - '8882:8882'
     depends_on:
       - consul-server
       - app-db
