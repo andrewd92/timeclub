@@ -49,6 +49,29 @@ services:
     networks:
       - net
 
+  club-service1:
+    image: golang:1.17
+    container_name: club-service1
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - go-modules:/go
+    command: bash -c "cd club_service && go mod download && go run ./main.go"
+    environment:
+      VIPER_CONFIG_NAME: 'docker'
+      DB_HOST: 'app-db'
+      SERVICE_HOST: 'club-service1'
+      CONSUL_HOST: 'consul-server'
+      CONSUL_CHECK_INTERVAL: '60s'
+      SERVICE_PORT: 8083
+    ports:
+      - '8083:8083'
+    depends_on:
+      - consul-server
+      - app-db
+    networks:
+      - net
+
   visit-service:
     image: golang:1.17
     container_name: visit-service
@@ -69,6 +92,26 @@ services:
     depends_on:
       - consul-server
       - app-db
+    networks:
+      - net
+
+  api-gateway:
+    image: golang:1.17
+    container_name: api-gateway
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - go-modules:/go
+    command: bash -c "cd api_gateway && go mod download && go run ./main.go"
+    environment:
+      VIPER_CONFIG_NAME: 'docker'
+      SERVER_HOST: 'api-gateway'
+      CONSUL_HOST: 'consul-server'
+      SERVER_PORT_HTTP: 80
+    ports:
+      - '80:80'
+    depends_on:
+      - consul-server
     networks:
       - net
 
