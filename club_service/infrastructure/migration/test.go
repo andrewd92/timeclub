@@ -25,8 +25,13 @@ var testTransactions = []string{
     name VARCHAR(255) NOT NULL,
     short_name VARCHAR(255) NOT NULL
 );`,
+	`CREATE TABLE IF NOT EXISTS price_list (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL
+);`,
 	`INSERT INTO currency(id, name, short_name) VALUES (1, 'US Dollar', 'USD')`,
 	`INSERT INTO club(name, open_time, price_list_id, currency_id) values ('t1', '12:00', 1, 1);`,
+	`INSERT INTO price_list(id, name) values (1, 'test price list');`,
 	`INSERT INTO price(price_list_id, period_from, period_to, value_per_minute)
 VALUES (1, 0, 360, 10);`,
 }

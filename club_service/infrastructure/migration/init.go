@@ -26,6 +26,10 @@ var transactions = []string{
     name VARCHAR(255) NOT NULL,
     short_name VARCHAR(255) NOT NULL
 );`,
+	`CREATE TABLE IF NOT EXISTS price_list (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);`,
 	`INSERT INTO currency(id, name, short_name) VALUES (1, 'US Dollar', 'USD')
 ON DUPLICATE KEY UPDATE name = 'US Dollar', short_name = 'USD'`,
 }

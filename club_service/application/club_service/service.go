@@ -6,6 +6,7 @@ import (
 	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/domain/currency"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
+	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -14,17 +15,39 @@ type ClubService interface {
 }
 
 type clubServiceImpl struct {
-	repository club.Repository
+	clubRepository      club.Repository
+	priceListRepository price_list.Repository
 }
 
 func (s clubServiceImpl) Create(request create.Request) (interface{}, error) {
-	clubEntity := club.NewClub(request.Name, request.OpenTime, price_list.Empty(), currency.USD())
-
-	newClub, err := s.repository.Save(clubEntity)
+	priceList := createPriceList(request)
+	priceList, err := s.priceListRepository.Save(priceList)
 	if err != nil {
-		log.WithError(err).WithField("clubEntity", clubEntity).Error("can not store clubEntity")
+		log.WithError(err).WithField("price_list", priceList).Error("can not store price list")
+		return nil, errors.New("db error")
+	}
+
+	clubEntity := club.NewClub(request.Name, request.OpenTime, priceList, currency.USD())
+
+	newClub, err := s.clubRepository.Save(clubEntity)
+	if err != nil {
+		log.WithError(err).WithField("club", clubEntity).Error("can not store clubEntity")
 		return nil, errors.New("db error")
 	}
 
 	return newClub.Marshal(), nil
+}
+
+func createPriceList(request create.Request) *price_list.PriceList {
+	prices := make([]*price.Price, len(request.PriceList))
+
+	for i, priceModel := range request.PriceList {
+		newPrice := price.NewPrice(
+			price.NewPricePeriod(priceModel.PricePeriod.From, priceModel.PricePeriod.To),
+			priceModel.ValuePerMinute,
+		)
+		prices[i] = newPrice
+	}
+
+	return price_list.NewPriceList(prices)
 }

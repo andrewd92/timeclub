@@ -4,4 +4,5 @@ package price_list
 
 type Repository interface {
 	GetById(id int64) (*PriceList, error)
+	Save(list *PriceList) (*PriceList, error)
 }
