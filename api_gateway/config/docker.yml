@@ -1,0 +1,15 @@
+service:
+  name: "api-gateway"
+
+server:
+  port:
+    http: 80
+  host: localhost
+
+consul:
+  enabled: true
+  host: localhost
+  port: 8500
+  check:
+    interval: '60s'
+    timeout: '3s'
