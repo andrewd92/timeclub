@@ -3,6 +3,7 @@ package club_dao
 //go:generate mockgen -destination=../../../utils/mocks/mock_club_dao.go -package=mocks github.com/andrewd92/timeclub/club_service/infrastructure/dao/club_dao ClubDao
 
 import (
+	"github.com/andrewd92/timeclub/club_service/domain/club"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ const (
 	//selectAll  = "SELECT * FROM club"
 	selectAll  = "SELECT club.id, club.name, club.open_time, club.price_list_id, club.currency_id FROM club"
 	selectById = "SELECT * FROM club WHERE id = ?"
+	insertClub = "INSERT INTO club(name, open_time, price_list_id, currency_id) VALUES (:name, :open_time, :price_list_id, :currency_id);"
 )
 
 type ClubModel struct {
@@ -25,6 +27,7 @@ type ClubModel struct {
 type ClubDao interface {
 	GetAll() ([]*ClubModel, error)
 	GetById(id int64) (*ClubModel, error)
+	Insert(club *club.Club) (int64, error)
 }
 
 type ClubDaoImpl struct {
@@ -73,4 +76,31 @@ func (d ClubDaoImpl) GetById(id int64) (*ClubModel, error) {
 	}
 
 	return model, nil
+}
+
+func (d ClubDaoImpl) Insert(club *club.Club) (int64, error) {
+	db, connectionErr := d.connection.Get()
+	if connectionErr != nil {
+		return 0, connectionErr
+	}
+
+	result, err := db.NamedExec(insertClub, map[string]interface{}{
+		"name":          club.Name(),
+		"open_time":     club.OpenTime(),
+		"price_list_id": 1,
+		"currency_id":   club.Currency().Id(),
+	})
+
+	if err != nil {
+		log.WithError(err).WithField("club", club).Error("can not insert club")
+		return 0, err
+	}
+
+	insertId, err := result.LastInsertId()
+	if err != nil {
+		log.WithError(err).WithField("club", club).Error("can not insert club")
+		return 0, err
+	}
+
+	return insertId, nil
 }

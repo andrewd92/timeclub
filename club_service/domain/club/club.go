@@ -13,8 +13,16 @@ type Club struct {
 	currency  *currency.Currency
 }
 
-func NewClub(id int64, name string, openTime string, priceList *price_list.PriceList, currency *currency.Currency) *Club {
+func NewClub(name string, openTime string, priceList *price_list.PriceList, currency *currency.Currency) *Club {
+	return &Club{name: name, openTime: openTime, priceList: priceList, currency: currency}
+}
+
+func NewClubWithId(id int64, name string, openTime string, priceList *price_list.PriceList, currency *currency.Currency) *Club {
 	return &Club{id: id, name: name, openTime: openTime, priceList: priceList, currency: currency}
+}
+
+func (c Club) WithId(id int64) *Club {
+	return &Club{id: id, name: c.name, openTime: c.openTime, priceList: c.priceList, currency: c.currency}
 }
 
 func (c Club) Currency() *currency.Currency {

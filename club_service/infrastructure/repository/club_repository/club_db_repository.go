@@ -46,6 +46,16 @@ func (r ClubDBRepository) GetById(id int64) (*club.Club, error) {
 	return convertModelToEntity(clubModel, priceList), nil
 }
 
+func (r ClubDBRepository) Save(club *club.Club) (*club.Club, error) {
+	id, err := r.dao.Insert(club)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return club.WithId(id), nil
+}
+
 func convertModelToEntity(model *club_dao.ClubModel, priceList *price_list.PriceList) *club.Club {
-	return club.NewClub(model.Id, model.Name, model.OpenTime, priceList, currency.USD())
+	return club.NewClubWithId(model.Id, model.Name, model.OpenTime, priceList, currency.USD())
 }

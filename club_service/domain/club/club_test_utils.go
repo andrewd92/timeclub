@@ -6,7 +6,7 @@ import (
 )
 
 func DefaultClub() *Club {
-	return NewClub(
+	return NewClubWithId(
 		1,
 		"Club A",
 		"12:00",

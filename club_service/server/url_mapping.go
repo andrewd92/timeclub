@@ -8,8 +8,11 @@ import (
 )
 
 func mapUrls() {
-	router.GET("/clubs", club_controller.All)
+	//v1
 	router.GET("/health", health)
+	router.GET("/api/v1/clubs", club_controller.All)
+	router.POST("/api/v1/create", club_controller.Create)
+
 }
 
 func health(c *gin.Context) {
