@@ -29,8 +29,12 @@ func (s serviceImpl) Target(path string) (string, error) {
 	}
 
 	targetAddr := fmt.Sprintf(
-		"http://%s/%s",
+		"%s/%s",
 		targetHost, strings.Join(parts[1:], "/"),
 	)
+
+	log.WithField("path", path).
+		WithField("targetPath", targetAddr).
+		Debug("Revers proxy result")
 	return targetAddr, nil
 }

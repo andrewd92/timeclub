@@ -18,6 +18,8 @@ type serviceImpl struct {
 }
 
 func (s serviceImpl) LookUpUrl(serviceName string) (string, error) {
+	serviceFullName := serviceName + "-service"
+
 	config := consulapi.DefaultConfig()
 	config.Address = consulUrl()
 	consul, err := consulapi.NewClient(config)
@@ -35,7 +37,7 @@ func (s serviceImpl) LookUpUrl(serviceName string) (string, error) {
 	match := make([]*consulapi.AgentService, 0)
 
 	for _, service := range services {
-		if service.Service == serviceName {
+		if service.Service == serviceFullName {
 			match = append(match, service)
 		}
 	}
@@ -52,7 +54,10 @@ func (s serviceImpl) LookUpUrl(serviceName string) (string, error) {
 
 	url := fmt.Sprintf("http://%s:%v", address, port)
 
-	log.WithField("service", serviceName).WithField("url", url).Debug("Service url found")
+	log.WithField("service", serviceName).
+		WithField("url", url).
+		WithField("full_name", serviceFullName).
+		Debug("Service url found")
 
 	return url, nil
 }
