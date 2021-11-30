@@ -1,0 +1,27 @@
+db:
+  user: "root"
+  pass: "root"
+  host: "db"
+  port: "3306"
+  database: "timeclub"
+
+service:
+  name: "client-service"
+
+server:
+  port:
+    http: 8084
+    grpc: 9080
+  host: "client-service"
+
+client:
+  club:
+    grpc:
+      url: "localhost:9080"
+
+consul:
+  enabled: true
+  port: 8500
+  check:
+    interval: '5s'
+    timeout: '3s'

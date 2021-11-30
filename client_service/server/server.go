@@ -1,12 +1,12 @@
 package server
 
 import (
-	"fmt"
 	"github.com/andrewd92/timeclub/client_service/api"
 	"github.com/andrewd92/timeclub/client_service/grpc/client_service"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 )
 
@@ -15,38 +15,52 @@ var (
 )
 
 func StartApplication() {
+	initLogger()
+	initConfig()
+
+	registerServiceWithConsul()
+
 	go runGrpcServer()
 	runHttpServer()
 }
 
 func runHttpServer() {
+	port := viper.GetString("server.port.http")
+	log.WithField("port", port).Info("HTTP port overridden by config")
+
 	mapUrls()
 
-	err := router.Run(":8084")
+	err := router.Run(":" + port)
 	if err != nil {
-		fmt.Println("Err: ", err.Error())
+		log.WithError(err).Fatal("can not run http server")
 	}
 }
 
 func runGrpcServer() {
-	listen, listenErr := net.Listen("tcp", ":9084")
+	port := viper.GetString("server.port.grpc")
+
+	if port == "" {
+		log.Error("can not find grpc port in config. User default: 9084")
+		port = "9084"
+	}
+
+	listen, listenErr := net.Listen("tcp", ":"+port)
 	if listenErr != nil {
-		log.Fatalf("failed to listen: %v", listenErr)
+		log.WithError(listenErr).WithField("port", port).Fatal("failed to listen grpc port")
 	}
 
 	grpcServer := grpc.NewServer()
-	clientServer, clientServerErr := client_service.Instance()
+	clientsGrpcService, clientServiceErr := client_service.Instance()
 
-	if clientServerErr != nil {
-		log.Fatal(clientServerErr)
+	if clientServiceErr != nil {
+		log.WithError(clientServiceErr).Error("can not instantiate clients grpc service impl")
 	}
 
-	api.RegisterClientServiceServer(grpcServer, clientServer)
-	//run grpc on :9090
+	api.RegisterClientServiceServer(grpcServer, clientsGrpcService)
 
-	log.Println("Listen and serve GRPC on :9084")
+	log.WithField("port", port).Info("Listen and serve GRPC")
 	err := grpcServer.Serve(listen)
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Fatal("can not run grpc server")
 	}
 }
