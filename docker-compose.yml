@@ -106,11 +106,33 @@ services:
     environment:
       VIPER_CONFIG_NAME: 'docker'
       DB_HOST: 'app-db'
-      SERVICE_HOST: 'client-service'
+      SERVER_HOST: 'client-service'
       CONSUL_HOST: 'consul-server'
-      SERVICE_PORT: 8884
+      SERVER_PORT_HTTP: 8884
     ports:
       - '8884:8884'
+    depends_on:
+      - consul-server
+      - app-db
+    networks:
+      - net
+
+  card-service:
+    image: golang:1.17
+    container_name: card-service
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - go-modules:/go
+    command: bash -c "cd card_service && go mod download && go run ./main.go"
+    environment:
+      VIPER_CONFIG_NAME: 'docker'
+      DB_HOST: 'app-db'
+      SERVER_HOST: 'card-service'
+      CONSUL_HOST: 'consul-server'
+      SERVER_PORT_HTTP: 8885
+    ports:
+      - '8885:8885'
     depends_on:
       - consul-server
       - app-db
