@@ -1,0 +1,22 @@
+db:
+  user: "root"
+  pass: "root"
+  host: "db"
+  port: "3306"
+  database: "timeclub"
+
+service:
+  name: "card-service"
+
+server:
+  port:
+    http: 8082
+    grpc: 9080
+  host: "card-service"
+
+consul:
+  enabled: true
+  port: 8500
+  check:
+    interval: '5s'
+    timeout: '3s'

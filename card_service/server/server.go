@@ -1,8 +1,9 @@
 package server
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -10,14 +11,22 @@ var (
 )
 
 func StartApplication() {
+	initLogger()
+	initConfig()
+
+	registerServiceWithConsul()
+
 	runHttpServer()
 }
 
 func runHttpServer() {
 	mapUrls()
 
-	err := router.Run(":8082")
+	port := viper.GetString("server.port.http")
+	log.WithField("port", port).Info("HTTP port overridden by config")
+
+	err := router.Run(":" + port)
 	if err != nil {
-		fmt.Println("Err: ", err.Error())
+		log.WithError(err).Fatal("can not run http server")
 	}
 }
