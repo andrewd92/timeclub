@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/andrewd92/timeclub/club_service/api/http/create"
 	"github.com/andrewd92/timeclub/club_service/domain/club"
-	"github.com/andrewd92/timeclub/club_service/domain/currency"
+	currencyPkg "github.com/andrewd92/timeclub/club_service/domain/currency"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list/price"
 	log "github.com/sirupsen/logrus"
@@ -17,6 +17,7 @@ type ClubService interface {
 type clubServiceImpl struct {
 	clubRepository      club.Repository
 	priceListRepository price_list.Repository
+	currencyRepository  currencyPkg.Repository
 }
 
 func (s clubServiceImpl) Create(request create.Request) (interface{}, error) {
@@ -27,7 +28,13 @@ func (s clubServiceImpl) Create(request create.Request) (interface{}, error) {
 		return nil, errors.New("db error")
 	}
 
-	clubEntity := club.NewClub(request.Name, request.OpenTime, priceList, currency.USD())
+	currency, err := s.currencyRepository.GetById(request.CurrencyId)
+	if err != nil {
+		log.WithError(err).WithField("currency", request.CurrencyId).Error("can not find currency")
+		return nil, errors.New("db error")
+	}
+
+	clubEntity := club.NewClub(request.Name, request.OpenTime, priceList, currency)
 
 	newClub, err := s.clubRepository.Save(clubEntity)
 	if err != nil {

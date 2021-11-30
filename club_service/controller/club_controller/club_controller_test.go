@@ -18,6 +18,10 @@ var getAll func() ([]*club.Club, error)
 type mockRepository struct {
 }
 
+func (m mockRepository) Save(_ *club.Club) (*club.Club, error) {
+	panic("implement me")
+}
+
 func (m mockRepository) GetAll() ([]*club.Club, error) {
 	return getAll()
 }

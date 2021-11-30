@@ -2,6 +2,7 @@ package club_service
 
 import (
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/club_repository"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/currency_repository"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/repository/price_list_repository"
 )
 
@@ -12,6 +13,7 @@ func Instance() ClubService {
 		service = &clubServiceImpl{
 			clubRepository:      club_repository.Instance(),
 			priceListRepository: price_list_repository.Instance(),
+			currencyRepository:  currency_repository.Instance(),
 		}
 	}
 
