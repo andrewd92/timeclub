@@ -95,6 +95,28 @@ services:
     networks:
       - net
 
+  client-service:
+    image: golang:1.17
+    container_name: client-service
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - go-modules:/go
+    command: bash -c "cd client_service && go mod download && go run ./main.go"
+    environment:
+      VIPER_CONFIG_NAME: 'docker'
+      DB_HOST: 'app-db'
+      SERVICE_HOST: 'client-service'
+      CONSUL_HOST: 'consul-server'
+      SERVICE_PORT: 8884
+    ports:
+      - '8884:8884'
+    depends_on:
+      - consul-server
+      - app-db
+    networks:
+      - net
+
   api-gateway:
     image: golang:1.17
     container_name: api-gateway
