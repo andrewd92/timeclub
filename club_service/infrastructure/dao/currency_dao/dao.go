@@ -47,9 +47,9 @@ func (d CurrencyDao) GetById(id int64) (*CurrencyModel, error) {
 		return nil, connectionErr
 	}
 
-	var model *CurrencyModel
+	var model = &CurrencyModel{}
 
-	selectErr := db.Get(&model, selectById, id)
+	selectErr := db.Get(model, selectById, id)
 	if selectErr != nil {
 		log.WithError(selectErr).WithField("query", selectById).Error("Can not select currency entry from db")
 		return nil, selectErr
