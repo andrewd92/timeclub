@@ -56,7 +56,7 @@ func httpPort() int {
 }
 
 func grpcPort() int {
-	port := viper.GetInt("server.grpc.http")
+	port := viper.GetInt("server.port.grpc")
 	if port == 0 {
 		log.Error("Service grpc port not found in config")
 		port = 9084

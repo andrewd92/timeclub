@@ -11,7 +11,13 @@ func initLogger() {
 		logLevel = "info"
 	}
 
-	log.SetFormatter(&log.TextFormatter{ForceColors: true})
+	log.SetFormatter(&log.TextFormatter{
+		ForceColors:            true,
+		DisableLevelTruncation: true,
+		FullTimestamp:          true,
+		PadLevelText:           true,
+	})
+	log.SetReportCaller(true)
 	level, err := log.ParseLevel(logLevel)
 	if err != nil {
 		log.WithField("level", logLevel).Warning("Can not parse log level. Info level set as default")
