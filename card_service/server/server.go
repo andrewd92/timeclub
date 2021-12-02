@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/andrewd92/timeclub/card_service/infrastructure/migration"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -13,6 +14,8 @@ var (
 func StartApplication() {
 	initLogger()
 	initConfig()
+
+	migration.Run()
 
 	registerServiceWithConsul()
 

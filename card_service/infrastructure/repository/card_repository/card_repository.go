@@ -13,21 +13,6 @@ type CardInMemoryRepository struct {
 	lock *sync.RWMutex
 }
 
-var repository card.Repository
-
-func Instance() card.Repository {
-	if nil != repository {
-		return repository
-	}
-
-	repository = &CardInMemoryRepository{
-		data: make(map[int64]*card.Card),
-		lock: &sync.RWMutex{},
-	}
-
-	return repository
-}
-
 func (r CardInMemoryRepository) GetById(id int64) (*card.Card, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()

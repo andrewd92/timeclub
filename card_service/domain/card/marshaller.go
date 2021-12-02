@@ -1,18 +1,22 @@
 package card
 
 type cardJson struct {
-	Id       int64   `json:"id"`
-	Discount float32 `json:"discount"`
-	Name     string  `json:"name"`
-	ClubId   int64   `json:"club_id"`
+	Id       int64       `json:"id"`
+	Discount float32     `json:"discount"`
+	Name     string      `json:"name"`
+	ClubId   interface{} `json:"club_id"`
 }
 
 func (c Card) Marshal() interface{} {
+	var clubId interface{} = nil
+	if c.ClubId() != 0 {
+		clubId = c.ClubId()
+	}
 	return cardJson{
 		Id:       c.id,
 		Discount: float32(c.discount),
 		Name:     c.name,
-		ClubId:   c.ClubId(),
+		ClubId:   clubId,
 	}
 }
 

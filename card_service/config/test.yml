@@ -1,0 +1,11 @@
+service:
+  name: "card-service"
+
+server:
+  port:
+    http: 8782
+    grpc: 9782
+  host: localhost
+
+consul:
+  enabled: false
