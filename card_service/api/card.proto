@@ -14,7 +14,7 @@ message Request {
 
 message Card {
   int64 Id = 1;
-  string Discount = 2;
+  float Discount = 2;
   string Name = 3;
   int64 ClubId  = 4;
 }
