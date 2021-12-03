@@ -1,7 +1,7 @@
 package application
 
 import (
-	"github.com/andrewd92/timeclub/card_service/domain/card"
+	cardPkg "github.com/andrewd92/timeclub/card_service/domain/card"
 	"github.com/andrewd92/timeclub/card_service/domain/card/card_template"
 	discountPkg "github.com/andrewd92/timeclub/card_service/domain/discount"
 	"github.com/andrewd92/timeclub/card_service/infrastructure/repository/card_repository"
@@ -9,7 +9,7 @@ import (
 )
 
 type cardServiceImpl struct {
-	cardRepository         card.Repository
+	cardRepository         cardPkg.Repository
 	cardTemplateRepository card_template.Repository
 }
 
@@ -17,6 +17,7 @@ type CardService interface {
 	Create(clubId int64, discount float32, name string) (interface{}, error)
 	CreateTemplate(clubId int64, discount float32, name string) (interface{}, error)
 	All() ([]interface{}, error)
+	ById(id int64) (interface{}, error)
 }
 
 var service CardService
@@ -33,7 +34,7 @@ func CardServiceInstance() CardService {
 }
 
 func (s cardServiceImpl) Create(clubId int64, discount float32, name string) (interface{}, error) {
-	newCard := card.NewCard(discountPkg.Discount(discount), name, clubId)
+	newCard := cardPkg.NewCard(discountPkg.Discount(discount), name, clubId)
 	cardModel, err := s.cardRepository.Save(newCard)
 
 	if err != nil {
@@ -60,5 +61,14 @@ func (s cardServiceImpl) All() ([]interface{}, error) {
 		return nil, err
 	}
 
-	return card.MarshalAll(cards), nil
+	return cardPkg.MarshalAll(cards), nil
+}
+
+func (s cardServiceImpl) ById(id int64) (interface{}, error) {
+	card, err := s.cardRepository.GetById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return card.Marshal(), nil
 }

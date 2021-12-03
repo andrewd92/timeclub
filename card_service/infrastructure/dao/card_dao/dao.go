@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	selectAll = "SELECT * FROM card"
+	selectAll  = "SELECT * FROM card"
+	selectById = "SELECT * FROM card WHERE id = ?"
 )
 
 type CardModel struct {
@@ -20,6 +21,7 @@ type CardModel struct {
 
 type CardDao interface {
 	GetAll() ([]CardModel, error)
+	GetById(id int64) (*CardModel, error)
 }
 
 type CardSqlDao struct {
@@ -30,17 +32,29 @@ func NewCardSqlDao(connection connection.Connection) *CardSqlDao {
 	return &CardSqlDao{connection: connection}
 }
 
-func (d CardSqlDao) GetAll() ([]CardModel, error) {
+func (d CardSqlDao) GetById(id int64) (*CardModel, error) {
 	db, connectionErr := d.connection.Get()
-	defer func(db *sqlx.DB) {
-		err := db.Close()
-		if err != nil {
-			log.WithError(err).Error("Can not close sql connection")
-		}
-	}(db)
 	if connectionErr != nil {
 		return nil, connectionErr
 	}
+	defer closeDb(db)
+
+	var model = &CardModel{}
+	selectErr := db.Get(model, selectById, id)
+	if selectErr != nil {
+		log.WithError(selectErr).WithField("query", selectById).Error("Can not select card from db")
+		return nil, selectErr
+	}
+
+	return model, nil
+}
+
+func (d CardSqlDao) GetAll() ([]CardModel, error) {
+	db, connectionErr := d.connection.Get()
+	if connectionErr != nil {
+		return nil, connectionErr
+	}
+	defer closeDb(db)
 
 	var models []CardModel
 
@@ -51,4 +65,11 @@ func (d CardSqlDao) GetAll() ([]CardModel, error) {
 	}
 
 	return models, nil
+}
+
+func closeDb(db *sqlx.DB) {
+	err := db.Close()
+	if err != nil {
+		log.WithError(err).Error("Can not close sql connection")
+	}
 }

@@ -10,12 +10,13 @@ type CardDBRepository struct {
 	dao card_dao.CardDao
 }
 
-func (c CardDBRepository) GetById(_ int64) (*card.Card, error) {
-	panic("implement me")
-}
+func (c CardDBRepository) GetById(id int64) (*card.Card, error) {
+	model, err := c.dao.GetById(id)
+	if err != nil {
+		return nil, err
+	}
 
-func (c CardDBRepository) Save(_ *card.Card) (*card.Card, error) {
-	panic("implement me")
+	return modelToEntity(model), nil
 }
 
 func (c CardDBRepository) All() ([]*card.Card, error) {
@@ -34,10 +35,14 @@ func (c CardDBRepository) All() ([]*card.Card, error) {
 	return cards, nil
 }
 
+func (c CardDBRepository) Save(_ *card.Card) (*card.Card, error) {
+	panic("implement me")
+}
+
 func modelToEntity(model *card_dao.CardModel) *card.Card {
 	clubId := int64(0)
 	if model.ClubId.Valid {
 		clubId = model.ClubId.Int64
 	}
-	return card.NewCard(discountPkg.Discount(model.Discount), model.Name, clubId)
+	return card.NewCard(discountPkg.Discount(model.Discount), model.Name, clubId).WithId(model.Id)
 }
