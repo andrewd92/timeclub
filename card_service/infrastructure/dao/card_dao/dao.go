@@ -2,6 +2,7 @@ package card_dao
 
 import (
 	"database/sql"
+	"github.com/andrewd92/timeclub/card_service/domain/card"
 	"github.com/andrewd92/timeclub/card_service/infrastructure/connection"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
@@ -10,6 +11,7 @@ import (
 const (
 	selectAll  = "SELECT * FROM card"
 	selectById = "SELECT * FROM card WHERE id = ?"
+	insertCard = "INSERT INTO card(discount, name, club_id) VALUES (:discount, :name, :clubId);"
 )
 
 type CardModel struct {
@@ -22,6 +24,7 @@ type CardModel struct {
 type CardDao interface {
 	GetAll() ([]CardModel, error)
 	GetById(id int64) (*CardModel, error)
+	Insert(card *card.Card) (int64, error)
 }
 
 type CardSqlDao struct {
@@ -65,6 +68,33 @@ func (d CardSqlDao) GetAll() ([]CardModel, error) {
 	}
 
 	return models, nil
+}
+
+func (d CardSqlDao) Insert(card *card.Card) (int64, error) {
+	db, connectionErr := d.connection.Get()
+	if connectionErr != nil {
+		return 0, connectionErr
+	}
+	defer closeDb(db)
+
+	result, err := db.NamedExec(insertCard, map[string]interface{}{
+		"discount": card.Discount(),
+		"name":     card.Name(),
+		"clubId":   card.ClubId(),
+	})
+
+	if err != nil {
+		log.WithError(err).WithField("card", card).Error("can not insert card")
+		return 0, err
+	}
+
+	insertId, err := result.LastInsertId()
+	if err != nil {
+		log.WithError(err).WithField("card", card).Error("can not insert card")
+		return 0, err
+	}
+
+	return insertId, nil
 }
 
 func closeDb(db *sqlx.DB) {

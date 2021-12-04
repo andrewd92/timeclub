@@ -35,8 +35,13 @@ func (c CardDBRepository) All() ([]*card.Card, error) {
 	return cards, nil
 }
 
-func (c CardDBRepository) Save(_ *card.Card) (*card.Card, error) {
-	panic("implement me")
+func (c CardDBRepository) Save(card *card.Card) (*card.Card, error) {
+	id, err := c.dao.Insert(card)
+	if err != nil {
+		return nil, err
+	}
+
+	return card.WithId(id), nil
 }
 
 func modelToEntity(model *card_dao.CardModel) *card.Card {
