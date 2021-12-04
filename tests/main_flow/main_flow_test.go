@@ -17,6 +17,13 @@ func Test_main_flow(t *testing.T) {
 	clubId := validateCreateClubResponse(t, response)
 
 	log.WithField("club_id", clubId).Info("Club created")
+
+	response, err = sendCreateCardRequest(client)
+
+	assert.Nil(t, err)
+	cardId := validateCreateCardResponse(t, response)
+
+	log.WithField("card_id", cardId).Info("Card created")
 }
 
 func sendCreateClubRequest(client *resty.Client) (*resty.Response, error) {
@@ -36,6 +43,27 @@ func validateCreateClubResponse(t *testing.T, response *resty.Response) int64 {
 		t.Fatal("Can not create club. No club id in response from server")
 	}
 	assert.Len(t, body["prices"], 2)
+
+	return int64(id.(float64))
+}
+
+func sendCreateCardRequest(client *resty.Client) (*resty.Response, error) {
+	return client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"name": "Best Clients Card", "club_id": 1, "discount": 15.4}`).
+		SetResult(map[string]interface{}{}).
+		Post("/card/api/v1/create")
+}
+
+func validateCreateCardResponse(t *testing.T, response *resty.Response) int64 {
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+
+	body := *response.Result().(*map[string]interface{})
+	id := body["id"]
+	if nil == id {
+		t.Fatal("Can not create card. No club id in response from server")
+	}
+	assert.Equal(t, body["discount"], 15.4)
 
 	return int64(id.(float64))
 }

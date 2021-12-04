@@ -10,9 +10,9 @@ import (
 func mapUrls() {
 	router.GET("/health", health)
 
-	router.GET("/card", card_controller.All)
-	router.GET("/card/:id", card_controller.ById)
-	router.POST("/card", card_controller.Create)
+	router.POST("/api/v1/create", card_controller.Create)
+	router.GET("/api/v1/all", card_controller.All)
+	router.GET("/api/v1/:id", card_controller.ById)
 	router.GET("/card/templates", card_controller.Templates)
 	router.POST("/card/template", card_controller.CreateTemplate)
 }
