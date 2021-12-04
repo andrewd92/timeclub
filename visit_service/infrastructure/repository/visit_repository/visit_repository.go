@@ -11,21 +11,6 @@ type VisitInMemoryRepository struct {
 	lock *sync.RWMutex
 }
 
-var repository visit.Repository
-
-func Instance() visit.Repository {
-	if nil != repository {
-		return repository
-	}
-
-	repository = &VisitInMemoryRepository{
-		data: make(map[int64]*visit.Visit),
-		lock: &sync.RWMutex{},
-	}
-
-	return repository
-}
-
 func (r VisitInMemoryRepository) Save(visit *visit.Visit) (*visit.Visit, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
@@ -39,7 +24,7 @@ func (r VisitInMemoryRepository) Save(visit *visit.Visit) (*visit.Visit, error) 
 	return model, nil
 }
 
-func (r VisitInMemoryRepository) GetAll() []*visit.Visit {
+func (r VisitInMemoryRepository) GetAll() ([]*visit.Visit, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
@@ -49,5 +34,5 @@ func (r VisitInMemoryRepository) GetAll() []*visit.Visit {
 		result = append(result, value)
 	}
 
-	return result
+	return result, nil
 }

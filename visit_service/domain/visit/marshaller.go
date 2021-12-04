@@ -9,7 +9,6 @@ import (
 type visitJson struct {
 	Id         int64   `json:"id"`
 	Start      string  `json:"start"`
-	ClientId   int64   `json:"client_id"`
 	ClientName string  `json:"client_name"`
 	ClubId     int64   `json:"club_id"`
 	Comment    string  `json:"comment"`
@@ -40,7 +39,7 @@ func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
 }
 
 func MarshalAll(visits []*Visit, club *api.Club) ([]interface{}, error) {
-	result := make([]interface{}, 0, len(visits))
+	result := make([]interface{}, len(visits))
 
 	now := time.Now()
 

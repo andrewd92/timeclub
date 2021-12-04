@@ -9,7 +9,14 @@ import (
 	"time"
 )
 
-func GetById(id int64) (*api.Club, error) {
+type ClubClient interface {
+	GetById(id int64) (*api.Club, error)
+}
+
+type ClubClientImpl struct {
+}
+
+func (c ClubClientImpl) GetById(id int64) (*api.Club, error) {
 	url := viper.GetString("client.club.grpc.url")
 
 	conn, err := grpc.Dial(url, grpc.WithInsecure())
@@ -17,7 +24,7 @@ func GetById(id int64) (*api.Club, error) {
 		log.WithError(err).Error("Fail to dial club server")
 		return nil, err
 	}
-	defer conn.Close()
+	defer closeConnection(conn)
 
 	client := api.NewClubServiceClient(conn)
 
@@ -32,4 +39,11 @@ func GetById(id int64) (*api.Club, error) {
 	}
 
 	return club, nil
+}
+
+func closeConnection(conn *grpc.ClientConn) {
+	err := conn.Close()
+	if err != nil {
+
+	}
 }

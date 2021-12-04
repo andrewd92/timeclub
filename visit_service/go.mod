@@ -5,7 +5,11 @@ go 1.17
 require (
 	github.com/andrewd92/timeclub/club_service v0.0.0-20211120000600-83a9d6cf475b
 	github.com/gin-gonic/gin v1.7.4
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/hashicorp/consul/api v1.11.0
+	github.com/jmoiron/sqlx v1.3.4
+	github.com/mattn/go-sqlite3 v1.14.9
+	github.com/mlhoyt/ramsql v0.0.22
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
@@ -45,6 +49,7 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect

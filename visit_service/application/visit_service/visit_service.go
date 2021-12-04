@@ -19,9 +19,12 @@ type visitServiceImpl struct {
 }
 
 func (s visitServiceImpl) All(id int64) ([]interface{}, error) {
-	visits := s.visitRepository.GetAll()
+	visits, err := s.visitRepository.GetAll()
+	if err != nil {
+		return nil, err
+	}
 
-	club, clubServiceErr := club_service.GetById(id)
+	club, clubServiceErr := club_service.Instance().GetById(id)
 	if nil != clubServiceErr {
 		return nil, clubServiceErr
 	}
@@ -54,7 +57,7 @@ func (s visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error
 		return nil, saveErr
 	}
 
-	club, clubServiceErr := club_service.GetById(clubId)
+	club, clubServiceErr := club_service.Instance().GetById(clubId)
 	if nil != clubServiceErr {
 		return nil, clubServiceErr
 	}
