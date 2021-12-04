@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	club "github.com/andrewd92/timeclub/club_service/domain/club"
 	club_dao "github.com/andrewd92/timeclub/club_service/infrastructure/dao/club_dao"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -51,6 +52,27 @@ func (_m *ClubDao) GetById(id int64) (*club_dao.ClubModel, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int64) error); ok {
 		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Insert provides a mock function with given fields: _a0
+func (_m *ClubDao) Insert(_a0 *club.Club) (int64, error) {
+	ret := _m.Called(_a0)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(*club.Club) int64); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*club.Club) error); ok {
+		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
 	}

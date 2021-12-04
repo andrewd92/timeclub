@@ -34,3 +34,26 @@ func (_m *Repository) GetById(id int64) (*price_list.PriceList, error) {
 
 	return r0, r1
 }
+
+// Save provides a mock function with given fields: list
+func (_m *Repository) Save(list *price_list.PriceList) (*price_list.PriceList, error) {
+	ret := _m.Called(list)
+
+	var r0 *price_list.PriceList
+	if rf, ok := ret.Get(0).(func(*price_list.PriceList) *price_list.PriceList); ok {
+		r0 = rf(list)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*price_list.PriceList)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*price_list.PriceList) error); ok {
+		r1 = rf(list)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
