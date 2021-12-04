@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -11,9 +12,9 @@ import (
 	"time"
 )
 
-func TestGetAll(t *testing.T) {
+func Test_GetAll(t *testing.T) {
 
-	url := fmt.Sprintf("http://%s:%s/card", viper.GetString("server.host"), viper.GetString("server.port.http"))
+	url := fmt.Sprintf("http://%s:%s/api/v1/all", viper.GetString("server.host"), viper.GetString("server.port.http"))
 	log.WithField("url", url).Debug("Test host URL")
 	client := http.Client{
 		Timeout: 500 * time.Millisecond,
@@ -26,6 +27,9 @@ func TestGetAll(t *testing.T) {
 
 	log.WithField("body", body).Debug("Response body")
 
-	expected := `[{"id":0,"discount":0,"name":"Guest Card","club_id":null},{"id":0,"discount":0,"name":"Guest Card","club_id":null},{"id":0,"discount":0,"name":"Guest Card","club_id":null}]`
-	assert.Equal(t, expected, string(body))
+	var responseBody []map[string]interface{}
+	err = json.Unmarshal(body, &responseBody)
+	assert.Nil(t, err)
+
+	assert.True(t, len(responseBody) >= 3)
 }

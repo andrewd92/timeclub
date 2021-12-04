@@ -15,7 +15,7 @@ import (
 
 func Test_Create(t *testing.T) {
 
-	url := fmt.Sprintf("http://%s:%s/card", viper.GetString("server.host"), viper.GetString("server.port.http"))
+	url := fmt.Sprintf("http://%s:%s/api/v1/create", viper.GetString("server.host"), viper.GetString("server.port.http"))
 	log.WithField("url", url).Debug("Test host URL")
 	client := http.Client{
 		Timeout: 500 * time.Millisecond,
