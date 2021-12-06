@@ -3,8 +3,8 @@ service:
 
 server:
   port:
-    http: 8081
-    grpc: 9081
+    http: 8882
+    grpc: 9882
   host: localhost
 
 db:
@@ -17,7 +17,7 @@ db:
 client:
   club:
     grpc:
-      url: "localhost:9080"
+      url: "club-service:9080"
 
 consul:
   enabled: true
