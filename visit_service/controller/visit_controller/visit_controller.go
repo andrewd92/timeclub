@@ -3,13 +3,25 @@ package visit_controller
 import (
 	"github.com/andrewd92/timeclub/visit_service/application/visit_service"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 )
 
+const clubIdKey = "club_id"
+
 func All(c *gin.Context) {
+	clubId, err := strconv.ParseInt(c.Param(clubIdKey), 10, 64)
+
+	if err != nil {
+		log.WithError(err).WithField(clubIdKey, c.Param(clubIdKey)).Error("can not parse club id")
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	service := visit_service.Instance()
 
-	response, responseErr := service.All(1)
+	response, responseErr := service.All(clubId)
 
 	if nil != responseErr {
 		c.String(http.StatusInternalServerError, "All visits response building error")

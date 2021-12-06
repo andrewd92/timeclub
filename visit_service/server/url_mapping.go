@@ -11,7 +11,7 @@ import (
 func mapUrls() {
 	router.GET("/health", health)
 
-	router.GET("/visits", visit_controller.All)
+	router.GET("/visits/:club_id", visit_controller.All)
 	router.POST("/visit", visit_controller.Create)
 
 	router.GET("/events", event_controller.All)

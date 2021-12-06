@@ -3,6 +3,7 @@ package test
 import (
 	"encoding/json"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"io"
@@ -13,8 +14,8 @@ import (
 
 func TestGetAll(t *testing.T) {
 
-	url := fmt.Sprintf("http://%s:%s/visits", viper.GetString("server.host"), viper.GetString("server.port.http"))
-	fmt.Println("Test URL: " + url)
+	url := fmt.Sprintf("http://%s:%s/visits/1", viper.GetString("server.host"), viper.GetString("server.port.http"))
+	log.WithField("url", url).Debug("Test url")
 	client := http.Client{
 		Timeout: 500 * time.Millisecond,
 	}
@@ -27,8 +28,8 @@ func TestGetAll(t *testing.T) {
 	var responseBody []map[string]interface{}
 	err = json.Unmarshal(body, &responseBody)
 	assert.Nil(t, err)
-	assert.NotNil(t, responseBody[0]["start"])
 
-	expected := `[{"id":1,"start":"` + responseBody[0]["start"].(string) + `","client_name":"Sasha","club_id":1,"comment":"","price":540,"currency":"$","duration":60,"card_id":1}]`
-	assert.Equal(t, expected, string(body))
+	firstVisit := responseBody[0]
+	assert.NotNil(t, firstVisit["start"])
+	assert.Equal(t, float64(1), firstVisit["id"])
 }
