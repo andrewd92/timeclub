@@ -7,6 +7,13 @@ server:
     grpc: 9081
   host: localhost
 
+db:
+  user: "root"
+  pass: "root"
+  host: "localhost"
+  port: "3306"
+  database: "timeclub"
+
 client:
   club:
     grpc:
