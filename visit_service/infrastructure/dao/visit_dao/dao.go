@@ -61,8 +61,13 @@ func (d VisitSqlDao) Insert(visit *visit.Visit) (int64, error) {
 		return 0, connectionErr
 	}
 
+	startTimeInUtc := visit.Start().UTC()
+
+	log.WithField("start_time", visit.Start().Format(utils.TimeFormat)).Info("Start time")
+	log.WithField("start_time_utc", startTimeInUtc.Format(utils.TimeFormat)).Info("Start time UTC")
+
 	params := map[string]interface{}{
-		"start":         visit.Start().UTC().Format(utils.TimeFormat),
+		"start":         startTimeInUtc.Format(utils.TimeFormat),
 		"club_id":       visit.ClubId(),
 		"order_details": "[]",
 		"comment":       visit.Comment(),

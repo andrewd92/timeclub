@@ -2,15 +2,35 @@ package visit_controller
 
 import (
 	"github.com/andrewd92/timeclub/visit_service/application/visit_service"
+	"github.com/andrewd92/timeclub/visit_service/utils"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
+	timePkg "time"
 )
 
 const clubIdKey = "club_id"
 
 func All(c *gin.Context) {
+	now := timePkg.Now()
+	getForTime(now, c)
+}
+
+func ForTime(c *gin.Context) {
+	loc, _ := timePkg.LoadLocation("Europe/Warsaw")
+	timeStr := c.Param("time")
+	time, err := timePkg.ParseInLocation(utils.TimeFormat, timeStr, loc)
+	if err != nil {
+		log.WithError(err).WithField("time", timeStr).Error("can not parse requested time for visits")
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	getForTime(time, c)
+}
+
+func getForTime(time timePkg.Time, c *gin.Context) {
 	clubId, err := strconv.ParseInt(c.Param(clubIdKey), 10, 64)
 
 	if err != nil {
@@ -21,7 +41,7 @@ func All(c *gin.Context) {
 
 	service := visit_service.Instance()
 
-	response, responseErr := service.All(clubId)
+	response, responseErr := service.All(clubId, time)
 
 	if nil != responseErr {
 		c.String(http.StatusInternalServerError, "All visits response building error")

@@ -47,13 +47,19 @@ func (r VisitDbRepository) GetAll() ([]*visitPkg.Visit, error) {
 }
 
 func modelToEntity(model *visit_dao.VisitModel) (*visitPkg.Visit, error) {
-	start, err := time.Parse(utils.TimeFormatWithTZ, model.Start+" UTC")
+	loc, err := time.LoadLocation("Europe/Warsaw")
+	if err != nil {
+		log.WithError(err).Error("can not parse time zone")
+	}
+
+	start, err := time.Parse(utils.TimeFormat, model.Start)
 	if err != nil {
 		return nil, err
 	}
 
+	startTime := start.In(loc)
 	return visitPkg.NewVisit(
-		&start,
+		&startTime,
 		model.ClubId,
 		order_details.NewOrderDetails([]*event.Event{}),
 		model.Comment,

@@ -11,25 +11,25 @@ import (
 
 type VisitService interface {
 	Create(clubId int64, cardId int64) (interface{}, error)
-	All(id int64) ([]interface{}, error)
+	All(id int64, dateTime time.Time) ([]interface{}, error)
 }
 
 type visitServiceImpl struct {
 	visitRepository visit.Repository
 }
 
-func (s visitServiceImpl) All(id int64) ([]interface{}, error) {
+func (s visitServiceImpl) All(clubId int64, dateTime time.Time) ([]interface{}, error) {
 	visits, err := s.visitRepository.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	club, clubServiceErr := club_service.Instance().GetById(id)
+	club, clubServiceErr := club_service.Instance().GetById(clubId)
 	if nil != clubServiceErr {
 		return nil, clubServiceErr
 	}
 
-	response, responseErr := visit.MarshalAll(visits, club)
+	response, responseErr := visit.MarshalAll(visits, club, dateTime)
 
 	if nil != responseErr {
 		log.WithError(responseErr).Error("All visits response building error")

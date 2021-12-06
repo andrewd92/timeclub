@@ -19,7 +19,7 @@ type visitJson struct {
 }
 
 func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
-	price, err := v.CalculatePrice(club, now, *discount.NewDiscount(10.0))
+	price, err := v.CalculatePrice(club, now, *discount.NewDiscount(0))
 
 	if err != nil {
 		return nil, err
@@ -38,10 +38,8 @@ func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
 	}, nil
 }
 
-func MarshalAll(visits []*Visit, club *api.Club) ([]interface{}, error) {
+func MarshalAll(visits []*Visit, club *api.Club, now time.Time) ([]interface{}, error) {
 	result := make([]interface{}, len(visits))
-
-	now := time.Now()
 
 	for i, visit := range visits {
 
