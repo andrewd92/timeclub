@@ -18,32 +18,40 @@ type visitJson struct {
 	CardId     int64   `json:"card_id"`
 }
 
-func (v Visit) Marshal(now time.Time, club *api.Club) (interface{}, error) {
-	price, err := v.CalculatePrice(club, now, *discount.NewDiscount(0))
+type Marshaller interface {
+	MarshalAll(visits []*Visit, club *api.Club, now time.Time) ([]interface{}, error)
+	Marshal(visit *Visit, now time.Time, club *api.Club) (interface{}, error)
+}
+
+type MarshallerImpl struct {
+}
+
+func (m MarshallerImpl) Marshal(visit *Visit, now time.Time, club *api.Club) (interface{}, error) {
+	price, err := visit.CalculatePrice(club, now, *discount.NewDiscount(0))
 
 	if err != nil {
 		return nil, err
 	}
 
 	return visitJson{
-		Id:         v.id,
-		Start:      v.start.Format("2006-01-02 15:04:05"),
-		ClientName: v.clientName,
-		ClubId:     v.ClubId(),
-		Comment:    v.comment,
+		Id:         visit.id,
+		Start:      visit.start.Format("2006-01-02 15:04:05"),
+		ClientName: visit.clientName,
+		ClubId:     visit.ClubId(),
+		Comment:    visit.comment,
 		Price:      price,
 		Currency:   club.Currency.ShortName,
-		Duration:   v.Duration(now),
-		CardId:     v.CardId(),
+		Duration:   visit.Duration(now),
+		CardId:     visit.CardId(),
 	}, nil
 }
 
-func MarshalAll(visits []*Visit, club *api.Club, now time.Time) ([]interface{}, error) {
+func (m MarshallerImpl) MarshalAll(visits []*Visit, club *api.Club, now time.Time) ([]interface{}, error) {
 	result := make([]interface{}, len(visits))
 
 	for i, visit := range visits {
 
-		json, err := visit.Marshal(now, club)
+		json, err := m.Marshal(visit, now, club)
 
 		if err != nil {
 			return nil, err

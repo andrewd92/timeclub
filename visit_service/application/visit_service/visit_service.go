@@ -2,21 +2,21 @@ package visit_service
 
 import (
 	"github.com/andrewd92/timeclub/visit_service/client/club_service"
-	"github.com/andrewd92/timeclub/visit_service/domain/event"
-	"github.com/andrewd92/timeclub/visit_service/domain/order_details"
 	"github.com/andrewd92/timeclub/visit_service/domain/visit"
 	log "github.com/sirupsen/logrus"
 	"time"
 )
 
 type VisitService interface {
-	Create(clubId int64, cardId int64) (interface{}, error)
+	Create(clubId int64, cardId int64, dateTime time.Time) (interface{}, error)
 	All(id int64, dateTime time.Time) ([]interface{}, error)
 }
 
 type visitServiceImpl struct {
 	visitRepository   visit.Repository
 	clubServiceClient club_service.ClubClient
+	visitMarshaller   visit.Marshaller
+	visitFactory      visit.Factory
 }
 
 func (s visitServiceImpl) All(clubId int64, dateTime time.Time) ([]interface{}, error) {
@@ -30,7 +30,7 @@ func (s visitServiceImpl) All(clubId int64, dateTime time.Time) ([]interface{}, 
 		return nil, clubServiceErr
 	}
 
-	response, responseErr := visit.MarshalAll(visits, club, dateTime)
+	response, responseErr := s.visitMarshaller.MarshalAll(visits, club, dateTime)
 
 	if nil != responseErr {
 		log.WithError(responseErr).Error("All visits response building error")
@@ -40,20 +40,10 @@ func (s visitServiceImpl) All(clubId int64, dateTime time.Time) ([]interface{}, 
 	return response, nil
 }
 
-func (s visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error) {
-	now := time.Now()
-
-	newVisit := visit.NewVisit(
-		&now,
-		clubId,
-		order_details.NewOrderDetails(make([]*event.Event, 0)),
-		"",
-		cardId,
-		"Guest",
-	)
+func (s visitServiceImpl) Create(clubId int64, cardId int64, dateTime time.Time) (interface{}, error) {
+	newVisit := s.visitFactory.Create(clubId, cardId)
 
 	visitModel, saveErr := s.visitRepository.Save(newVisit)
-
 	if nil != saveErr {
 		return nil, saveErr
 	}
@@ -63,7 +53,7 @@ func (s visitServiceImpl) Create(clubId int64, cardId int64) (interface{}, error
 		return nil, clubServiceErr
 	}
 
-	marshal, marshalErr := visitModel.Marshal(now, club)
+	marshal, marshalErr := s.visitMarshaller.Marshal(visitModel, dateTime, club)
 	if marshalErr != nil {
 		return nil, marshalErr
 	}

@@ -68,7 +68,9 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	response, createVisitErr := service.Create(request.ClubId, request.CardId)
+	now := timePkg.Now()
+
+	response, createVisitErr := service.Create(request.ClubId, request.CardId, now)
 
 	if createVisitErr != nil {
 		c.String(http.StatusInternalServerError, createVisitErr.Error())
