@@ -37,6 +37,10 @@ type VisitSqlDao struct {
 	connection connection.Connection
 }
 
+func NewVisitSqlDao(connection connection.Connection) *VisitSqlDao {
+	return &VisitSqlDao{connection: connection}
+}
+
 func (d VisitSqlDao) GetAll() ([]VisitModel, error) {
 	db, connectionErr := d.connection.Get()
 	if connectionErr != nil {
