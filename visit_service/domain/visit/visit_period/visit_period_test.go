@@ -115,8 +115,9 @@ func TestVisitPeriod_PeriodWhenPricePeriodGreaterThenVisitPeriod(t *testing.T) {
 
 func TestVisitPeriod_CalculatePrice(t *testing.T) {
 	now := time.Now()
-	visitStart := now.Add(-3 * time.Hour)
-	period := NewVisitPeriod(visitStart, now.Add(-1*time.Hour))
+	hoursBeforeStart := int64(8)
+	visitStart := now.Add(time.Duration(-1*hoursBeforeStart) * time.Hour)
+	period := NewVisitPeriod(visitStart, now)
 	prices := []*api.Price{utils.DefaultPrice()}
 
 	eventStart := visitStart.Add(30 * time.Minute)
@@ -125,7 +126,7 @@ func TestVisitPeriod_CalculatePrice(t *testing.T) {
 
 	actual := period.CalculatePrice(prices, details)
 
-	discountFromEvent := float32(30)
+	discountFromEvent := float32(utils.DefaultPricePeriodDurationMinutes) - 30
 	expected := utils.DefaultPriceValue*float32(utils.DefaultPricePeriodDurationMinutes) - discountFromEvent
 
 	assert.Equal(t, expected, actual)
