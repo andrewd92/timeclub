@@ -10,11 +10,11 @@ import (
 func mapUrls() {
 	router.GET("/health", health)
 
-	router.POST("/api/v1/create", card_controller.Create)
-	router.GET("/api/v1/all", card_controller.All)
-	router.GET("/api/v1/:id", card_controller.ById)
-	router.GET("/card/templates", card_controller.Templates)
-	router.POST("/card/template", card_controller.CreateTemplate)
+	router.POST("/public/api/v1/", card_controller.Create)
+	router.GET("/public/api/v1/", card_controller.All)
+	router.GET("/public/api/v1/:id", card_controller.ById)
+	router.GET("/public/api/v1/templates", card_controller.Templates)
+	router.POST("/public/api/v1/template", card_controller.CreateTemplate)
 }
 func health(c *gin.Context) {
 	log.Debug("Health endpoint called")
