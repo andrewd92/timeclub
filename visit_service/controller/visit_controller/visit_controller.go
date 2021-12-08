@@ -12,25 +12,33 @@ import (
 
 const clubIdKey = "club_id"
 
-func All(c *gin.Context) {
-	now := timePkg.Now()
-	getForTime(now, c)
+type VisitController struct {
+	visitService visit_service.VisitService
 }
 
-func ForTime(c *gin.Context) {
-	loc, _ := timePkg.LoadLocation("Europe/Warsaw")
+func (vc VisitController) All(c *gin.Context) {
+	now := timePkg.Now()
+	vc.getForTime(now, c)
+}
+
+func (vc VisitController) ForTime(c *gin.Context) {
 	timeStr := c.Param("time")
-	time, err := timePkg.ParseInLocation(utils.TimeFormat, timeStr, loc)
+	time, err := vc.parseTime(timeStr)
 	if err != nil {
 		log.WithError(err).WithField("time", timeStr).Error("can not parse requested time for visits")
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	getForTime(time, c)
+	vc.getForTime(time, c)
 }
 
-func getForTime(time timePkg.Time, c *gin.Context) {
+func (vc VisitController) parseTime(timeStr string) (timePkg.Time, error) {
+	loc, _ := timePkg.LoadLocation("Europe/Warsaw")
+	return timePkg.ParseInLocation(utils.TimeFormat, timeStr, loc)
+}
+
+func (vc VisitController) getForTime(time timePkg.Time, c *gin.Context) {
 	clubId, err := strconv.ParseInt(c.Param(clubIdKey), 10, 64)
 
 	if err != nil {
@@ -39,12 +47,10 @@ func getForTime(time timePkg.Time, c *gin.Context) {
 		return
 	}
 
-	service := visit_service.Instance()
-
-	response, responseErr := service.All(clubId, time)
+	response, responseErr := vc.visitService.All(clubId, time)
 
 	if nil != responseErr {
-		c.String(http.StatusInternalServerError, "All visits response building error")
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -56,9 +62,7 @@ type createRequest struct {
 	CardId int64 `json:"card_id"`
 }
 
-func Create(c *gin.Context) {
-	service := visit_service.Instance()
-
+func (vc VisitController) Create(c *gin.Context) {
 	request := createRequest{}
 
 	bindingErr := c.BindJSON(&request)
@@ -70,7 +74,7 @@ func Create(c *gin.Context) {
 
 	now := timePkg.Now()
 
-	response, createVisitErr := service.Create(request.ClubId, request.CardId, now)
+	response, createVisitErr := vc.visitService.Create(request.ClubId, request.CardId, now)
 
 	if createVisitErr != nil {
 		c.String(http.StatusInternalServerError, createVisitErr.Error())
