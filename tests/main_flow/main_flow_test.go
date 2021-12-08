@@ -47,7 +47,7 @@ func Test_main_flow(t *testing.T) {
 func sendGetVisits(client *resty.Client) (*resty.Response, error) {
 	now := time.Now().Add(time.Hour)
 
-	url := fmt.Sprintf("/visit/visits/%d/time/%s", clubId, now.Format(utils.TimeFormat))
+	url := fmt.Sprintf("/visit/public/api/v1/%d/time/%s", clubId, now.Format(utils.TimeFormat))
 
 	log.WithField("url", url).Info("Get visits for time")
 
@@ -93,7 +93,7 @@ func sendCreateVisitRequest(client *resty.Client) (*resty.Response, error) {
 		SetHeader("Content-Type", "application/json").
 		SetBody(createVisitRequest).
 		SetResult(map[string]interface{}{}).
-		Post("/visit/visit")
+		Post("/visit/public/api/v1/")
 }
 
 func validateCreateVisitResponse(t *testing.T, response *resty.Response) int64 {
@@ -118,7 +118,7 @@ func sendCreateClubRequest(client *resty.Client) (*resty.Response, error) {
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"name":"Test Club","open_time":"12:00","price_list_id":[{"price_period":{"from":0,"to":60},"value_per_minute":5},{"price_period":{"from":60,"to":360},"value_per_minute":10}],"currency_id":1}`).
 		SetResult(map[string]interface{}{}).
-		Post("/club/api/v1/create")
+		Post("/club/public/api/v1/")
 }
 
 func validateCreateClubResponse(t *testing.T, response *resty.Response) int64 {
@@ -139,7 +139,7 @@ func sendCreateCardRequest(client *resty.Client) (*resty.Response, error) {
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"name": "Best Clients Card", "club_id": 1, "discount": 15.4}`).
 		SetResult(map[string]interface{}{}).
-		Post("/card/api/v1/create")
+		Post("/card/public/api/v1/")
 }
 
 func validateCreateCardResponse(t *testing.T, response *resty.Response) int64 {
