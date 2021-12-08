@@ -12,13 +12,14 @@ import (
 
 const clubIdKey = "club_id"
 
+var timeNowMock *timePkg.Time
+
 type VisitController struct {
 	visitService visit_service.VisitService
 }
 
 func (vc VisitController) All(c *gin.Context) {
-	now := timePkg.Now()
-	vc.getForTime(now, c)
+	vc.getForTime(now(), c)
 }
 
 func (vc VisitController) ForTime(c *gin.Context) {
@@ -68,18 +69,25 @@ func (vc VisitController) Create(c *gin.Context) {
 	bindingErr := c.BindJSON(&request)
 
 	if bindingErr != nil {
-		c.String(http.StatusBadRequest, "Invalid request")
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	now := timePkg.Now()
-
-	response, createVisitErr := vc.visitService.Create(request.ClubId, request.CardId, now)
+	response, createVisitErr := vc.visitService.Create(request.ClubId, request.CardId, now())
 
 	if createVisitErr != nil {
-		c.String(http.StatusInternalServerError, createVisitErr.Error())
+		log.WithError(createVisitErr).WithField("request", request).Error("can not create visit")
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func now() timePkg.Time {
+	if nil != timeNowMock {
+		return *timeNowMock
+	}
+
+	return timePkg.Now()
 }
