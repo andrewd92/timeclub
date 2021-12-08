@@ -10,8 +10,8 @@ import (
 func mapUrls() {
 	//v1
 	router.GET("/health", health)
-	router.GET("/api/v1/clubs", club_controller.All)
-	router.POST("/api/v1/create", club_controller.Create)
+	router.GET("/public/api/v1/", club_controller.All)
+	router.POST("/public/api/v1/", club_controller.Create)
 
 }
 

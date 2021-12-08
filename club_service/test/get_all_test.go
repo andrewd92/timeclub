@@ -12,7 +12,7 @@ import (
 
 func TestGetAll(t *testing.T) {
 
-	url := fmt.Sprintf("http://%s:%s/api/v1/clubs", viper.GetString("service.host"), viper.GetString("service.port"))
+	url := fmt.Sprintf("http://%s:%s/public/api/v1/", viper.GetString("service.host"), viper.GetString("service.port"))
 	fmt.Println("Test URL: " + url)
 	client := http.Client{
 		Timeout: 500 * time.Millisecond,
