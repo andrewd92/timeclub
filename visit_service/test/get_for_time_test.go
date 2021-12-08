@@ -16,7 +16,7 @@ import (
 func Test_GetForTime(t *testing.T) {
 	now := time.Now().Add(time.Hour)
 
-	url := fmt.Sprintf("http://%s:%s/visits/1/time/%s",
+	url := fmt.Sprintf("http://%s:%s/public/api/v1/1/time/%s",
 		viper.GetString("server.host"),
 		viper.GetString("server.port.http"),
 		now.Format(utils.TimeFormat),

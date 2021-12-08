@@ -11,12 +11,12 @@ import (
 func mapUrls() {
 	router.GET("/health", health)
 
-	router.GET("/visits/:club_id", visit_controller.All)
-	router.GET("/visits/:club_id/time/:time", visit_controller.ForTime)
-	router.POST("/visit", visit_controller.Create)
+	router.GET("/public/api/v1/:club_id", visit_controller.All)
+	router.GET("/public/api/v1/:club_id/time/:time", visit_controller.ForTime)
+	router.POST("/public/api/v1/", visit_controller.Create)
 
-	router.GET("/events", event_controller.All)
-	router.POST("/event", event_controller.Create)
+	router.GET("/public/api/v1/events", event_controller.All)
+	router.POST("/public/api/v1/event", event_controller.Create)
 }
 
 func health(c *gin.Context) {
