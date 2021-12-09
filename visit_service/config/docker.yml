@@ -1,0 +1,27 @@
+service:
+  name: "visit-service"
+
+server:
+  port:
+    http: 8882
+    grpc: 9882
+  host: localhost
+
+db:
+  user: "root"
+  pass: "root"
+  host: "db"
+  port: "3306"
+  database: "timeclub"
+
+client:
+  club:
+    grpc:
+      url: "club-service:9080"
+
+consul:
+  enabled: true
+  port: 8500
+  check:
+    interval: '5s'
+    timeout: '3s'

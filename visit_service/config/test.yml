@@ -1,0 +1,11 @@
+service:
+  name: "visit-service"
+
+server:
+  port:
+    http: 11781
+    grpc: 11781
+  host: localhost
+
+consul:
+  enabled: false

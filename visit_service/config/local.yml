@@ -1,0 +1,23 @@
+service:
+  name: "visit-service"
+
+server:
+  port:
+    http: 8081
+    grpc: 9081
+  host: localhost
+
+db:
+  user: "root"
+  pass: "root"
+  host: "localhost"
+  port: "3306"
+  database: "timeclub"
+
+client:
+  club:
+    grpc:
+      url: "localhost:9080"
+
+consul:
+  enabled: false
