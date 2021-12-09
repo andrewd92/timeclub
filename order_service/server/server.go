@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/andrewd92/timeclub/visit_service/infrastructure/migration"
+	"github.com/andrewd92/timeclub/order_service/infrastructure/migration"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

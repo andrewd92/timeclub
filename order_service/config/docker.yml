@@ -3,8 +3,8 @@ service:
 
 server:
   port:
-    http: 8882
-    grpc: 9882
+    http: 8885
+    grpc: 9885
   host: localhost
 
 db:
