@@ -5,6 +5,7 @@ import (
 	"github.com/andrewd92/timeclub/club_service/domain/currency"
 	"github.com/andrewd92/timeclub/club_service/domain/price_list"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/dao/club_dao"
+	"github.com/andrewd92/timeclub/club_service/infrastructure/model"
 )
 
 type ClubDBRepository struct {
@@ -47,7 +48,7 @@ func (r ClubDBRepository) GetById(id int64) (*club.Club, error) {
 }
 
 func (r ClubDBRepository) Save(club *club.Club) (*club.Club, error) {
-	id, err := r.dao.Insert(club)
+	id, err := r.dao.Insert(convertEntityToModel(club))
 
 	if err != nil {
 		return nil, err
@@ -56,6 +57,16 @@ func (r ClubDBRepository) Save(club *club.Club) (*club.Club, error) {
 	return club.WithId(id), nil
 }
 
-func convertModelToEntity(model *club_dao.ClubModel, priceList *price_list.PriceList) *club.Club {
+func convertModelToEntity(model *model.ClubModel, priceList *price_list.PriceList) *club.Club {
 	return club.NewClubWithId(model.Id, model.Name, model.OpenTime, priceList, currency.USD())
+}
+
+func convertEntityToModel(club *club.Club) *model.ClubModel {
+	return &model.ClubModel{
+		Id:          club.Id(),
+		Name:        club.Name(),
+		OpenTime:    club.OpenTime(),
+		PriceListId: 1,
+		CurrencyId:  club.Currency().Id(),
+	}
 }

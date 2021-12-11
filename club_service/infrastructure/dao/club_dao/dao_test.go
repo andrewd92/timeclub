@@ -3,6 +3,7 @@ package club_dao
 import (
 	"fmt"
 	"github.com/andrewd92/timeclub/club_service/infrastructure/connection"
+	model2 "github.com/andrewd92/timeclub/club_service/infrastructure/model"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -53,7 +54,7 @@ func TestClubDao_GetById(t *testing.T) {
 
 	model, err := dao.GetById(clubId)
 
-	expected := &ClubModel{
+	expected := &model2.ClubModel{
 		Id:          clubId,
 		Name:        "t2",
 		OpenTime:    "12:00",
@@ -73,4 +74,40 @@ func TestClubDao_GetAll(t *testing.T) {
 	assert.NotNil(t, models)
 	assert.Equal(t, 4, len(models))
 	assert.Equal(t, "t3", models[2].Name)
+}
+
+func TestClubDaoImpl_Insert(t *testing.T) {
+	dbModel := &model2.ClubModel{
+		Name:        "t2",
+		OpenTime:    "12:00",
+		PriceListId: 1,
+		CurrencyId:  1,
+	}
+
+	id, err := dao.Insert(dbModel)
+	assert.Nil(t, err)
+	assert.NotNil(t, id)
+	assert.Greater(t, id, int64(0))
+}
+
+func TestClubDaoImpl_Update(t *testing.T) {
+	expected := "new test name"
+
+	dbModel := &model2.ClubModel{
+		Name:        "t2",
+		OpenTime:    "12:00",
+		PriceListId: 1,
+		CurrencyId:  1,
+	}
+
+	id, _ := dao.Insert(dbModel)
+	dbModel.Id = id
+	dbModel.Name = expected
+
+	err := dao.Update(dbModel)
+	assert.Nil(t, err)
+
+	modelFromDb, err := dao.GetById(id)
+	assert.Nil(t, err)
+	assert.Equal(t, expected, modelFromDb.Name)
 }
