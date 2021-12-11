@@ -11,9 +11,9 @@ import (
 )
 
 func parse(path string) []string {
-	fset := token.NewFileSet()
+	fileSet := token.NewFileSet()
 
-	node, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
+	node, err := parser.ParseFile(fileSet, path, nil, parser.ParseComments)
 
 	if err != nil {
 		log.WithError(err).Fatal("Error")
