@@ -1,4 +1,4 @@
-package order_status
+package domain
 
 import (
 	"github.com/stretchr/testify/assert"

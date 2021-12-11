@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS orders (
       visit_id INT UNSIGNED NOT NULL,
       index (order_id)
 );`,
+	`ALTER TABLE order_visits ADD INDEX (order_id);`,
 }
 
 func initMigration(db *sqlx.DB) {
