@@ -7,20 +7,19 @@ import (
 
 var transactions = []string{
 	`CREATE TABLE IF NOT EXISTS visit (
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     start DATETIME NOT NULL,
     club_id INT UNSIGNED NOT NULL,
     order_details TEXT NOT NULL,
     comment VARCHAR(255) NOT NULL DEFAULT '',
     card_id INT UNSIGNED NOT NULL,
-    client_name VARCHAR(255) NOT NULL,
-	INDEX (club_id)
+    client_name VARCHAR(255) NOT NULL
 );`,
+	`ALTER TABLE visit ADD INDEX (club_id);`,
 }
 
 func initMigration(db *sqlx.DB) {
-	firstTransaction := 0
-	for i := firstTransaction; i < len(transactions); i++ {
+	for i := 0; i < len(transactions); i++ {
 		log.WithField("migration", transactions[i]).Info("Run migration")
 		result := db.MustExec(transactions[i])
 		_, err := result.LastInsertId()

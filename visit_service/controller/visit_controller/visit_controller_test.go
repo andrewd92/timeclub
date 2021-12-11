@@ -1,14 +1,12 @@
 package visit_controller
 
 import (
-	"bytes"
 	"errors"
 	visitServiceMock "github.com/andrewd92/timeclub/visit_service/application/visit_service/mocks"
-	"github.com/gin-gonic/gin"
+	"github.com/andrewd92/timeclub/visit_service/utils/gin_test_utils"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 	"time"
@@ -19,18 +17,10 @@ func Test_ForTime(t *testing.T) {
 	timeStr := "2222-03-18 23:01:06"
 	clubId := int64(1)
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Params = []gin.Param{
-		{
-			Key:   clubIdKey,
-			Value: strconv.FormatInt(clubId, 10),
-		},
-		{
-			Key:   "time",
-			Value: timeStr,
-		},
-	}
+	c, w := gin_test_utils.Init(gin_test_utils.Request{Params: map[string]string{
+		clubIdKey: strconv.FormatInt(clubId, 10),
+		"time":    timeStr,
+	}})
 
 	requestTime, _ := controller.parseTime(timeStr)
 
@@ -51,18 +41,10 @@ func Test_ForTime_RespondBadRequest_WhenWrongTimeFormat(t *testing.T) {
 	timeStr := "123"
 	clubId := int64(1)
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Params = []gin.Param{
-		{
-			Key:   clubIdKey,
-			Value: strconv.FormatInt(clubId, 10),
-		},
-		{
-			Key:   "time",
-			Value: timeStr,
-		},
-	}
+	c, w := gin_test_utils.Init(gin_test_utils.Request{Params: map[string]string{
+		clubIdKey: strconv.FormatInt(clubId, 10),
+		"time":    timeStr,
+	}})
 
 	controller.ForTime(c)
 
@@ -74,18 +56,10 @@ func Test_ForTime_ResponseStatus500_WhenVisitServiceError(t *testing.T) {
 	timeStr := "2222-03-18 23:01:06"
 	clubId := int64(1)
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Params = []gin.Param{
-		{
-			Key:   clubIdKey,
-			Value: strconv.FormatInt(clubId, 10),
-		},
-		{
-			Key:   "time",
-			Value: timeStr,
-		},
-	}
+	c, w := gin_test_utils.Init(gin_test_utils.Request{Params: map[string]string{
+		clubIdKey: strconv.FormatInt(clubId, 10),
+		"time":    timeStr,
+	}})
 
 	requestTime, _ := controller.parseTime(timeStr)
 
@@ -101,10 +75,7 @@ func Test_Create(t *testing.T) {
 	now := time.Now()
 	timeNowMock = &now
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	requestStr := bytes.NewBuffer([]byte(`{"club_id":3, "card_id": 2}`))
-	c.Request, _ = http.NewRequest(http.MethodPost, "/public/api/v1/", requestStr)
+	c, w := gin_test_utils.Init(gin_test_utils.Request{Body: `{"club_id":3, "card_id": 2}`})
 
 	service.On("Create", int64(3), int64(2), *timeNowMock).
 		Return(map[string]string{"response": "created"}, nil)
@@ -123,10 +94,7 @@ func Test_Create_ResponseStatus400_WhenWrongRequest(t *testing.T) {
 	now := time.Now()
 	timeNowMock = &now
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	requestStr := bytes.NewBuffer([]byte(`{"club_id":"x", "card_id": "y"}`))
-	c.Request, _ = http.NewRequest(http.MethodPost, "/public/api/v1/", requestStr)
+	c, w := gin_test_utils.Init(gin_test_utils.Request{Body: `{"club_id":"x", "card_id": "y"}`})
 
 	controller.Create(c)
 
@@ -138,10 +106,7 @@ func Test_Create_ResponseStatus500_WhenServiceError(t *testing.T) {
 	now := time.Now()
 	timeNowMock = &now
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	requestStr := bytes.NewBuffer([]byte(`{"club_id":3, "card_id": 2}`))
-	c.Request, _ = http.NewRequest(http.MethodPost, "/public/api/v1/", requestStr)
+	c, w := gin_test_utils.Init(gin_test_utils.Request{Body: `{"club_id":3, "card_id": 2}`})
 
 	service.On("Create", int64(3), int64(2), *timeNowMock).
 		Return(nil, errors.New("test error"))
